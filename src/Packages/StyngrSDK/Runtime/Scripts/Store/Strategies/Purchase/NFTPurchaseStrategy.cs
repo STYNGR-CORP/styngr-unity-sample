@@ -1,0 +1,133 @@
+﻿using Packages.StyngrSDK.Runtime.Scripts.HelperClasses;
+using Packages.StyngrSDK.Runtime.Scripts.Radio;
+using Styngr.Enums;
+using Styngr.Interfaces;
+using Styngr.Model.Store;
+using System;
+using System.Collections;
+using UnityEngine;
+using static Packages.StyngrSDK.Runtime.Scripts.Store.PopUp_Confirm;
+
+namespace Packages.StyngrSDK.Runtime.Scripts.Store.Strategies.Purchase
+{
+    /// <summary>
+    /// Strategy for the NFT pop-up dialog behaviour.
+    /// </summary>
+    public class NFTPurchaseStrategy : IPurchaseStrategy
+    {
+        /// <summary>
+        /// Product object (<see cref="NFT"/>).
+        /// </summary>
+        public IId Product { get; }
+
+        /// <summary>
+        /// Type of the product.
+        /// </summary>
+        public ProductType ProductType { get; }
+
+        /// <summary>
+        /// Action which will update the sender (class that is initiating the purchase).
+        /// </summary>
+        public Action UpdateSender { get; }
+
+        /// <summary>
+        /// Caption of the pop-up dialog.
+        /// </summary>
+        public string CaptionText => "NFT Purchase Confirmation";
+
+        /// <summary>
+        /// Message of the pop-up dialog.
+        /// </summary>
+        public string MessageText => "Are you sure you want to buy this NFT?";
+
+        /// <summary>
+        /// Event used to notify the pop-up dialog to close.
+        /// </summary>
+        public EventHandler NotifyPopup { get; set; }
+
+        /// <summary>
+        /// Creates an instance of the <see cref="NFTPurchaseStrategy"/> class.
+        /// </summary>
+        /// <param name="product">Product object (<see cref="NFT"/>).</param>
+        /// <param name="productType">Type of the product.</param>
+        /// <param name="updateSender">Action which will update the sender (class that is initiating the purchase).</param>
+        public NFTPurchaseStrategy(IId product, ProductType productType, Action updateSender)
+        {
+            Product = product;
+            ProductType = productType;
+            UpdateSender = updateSender;
+        }
+
+        /// <summary>
+        /// Initiates the purchase of the NFT.
+        /// </summary>
+        /// <returns><see cref="IEnumerator"/> so that the Unity coroutine can handle the method.</returns>
+        public IEnumerator Buy()
+        {
+            yield return StoreManager.Instance.StoreInstance.PurchaseNftsAsync(Product, (NFTBuyInfo data) => { main.CallExternal(ConvertData(data), UpdateSender); }, main.OnBuyError);
+        }
+
+        /// <summary>
+        /// Confirms the purchase.
+        /// </summary>
+        /// <param name="jsonConfig">JSON configuration.</param>
+        /// <param name="purchaseInfo">Info about the purchase initiation.</param>
+        /// <returns><see cref="IEnumerator"/> so that the Unity coroutine can handle the method.</returns>
+        public IEnumerator Confirm(ConfigurationJSON jsonConfig, PurchaseInfo purchaseInfo)
+        {
+            yield return StoreManager.Instance.StoreInstance.ConfirmNftPurchase(jsonConfig.XApiToken, Guid.Parse(jsonConfig.appId), Guid.Parse(purchaseInfo.TransactionId), () =>
+            {
+                // Update store data
+                UpdateSender?.Invoke();
+
+                // Notify the pop-up dialog to close
+                NotifyPopup?.Invoke(this, new EventArgs());
+
+            }, (error) =>
+            {
+                Debug.LogError(error.errorMessage);
+                main.OnBuyError(error);
+            });
+        }
+
+        /// <inheritdoc/>
+        public IEnumerator Cancel(ConfigurationJSON jsonConfig, PurchaseInfo purchaseInfo)
+        {
+            if (!Guid.TryParse(jsonConfig.appId, out var appIdGuid))
+            {
+                Debug.LogError($"[{nameof(StyngPurchaseStrategy)}] Application id not in a Guid format, check the JSON configuration and try again.");
+                NotifyPopup?.Invoke(this, new EventArgs());
+                yield break;
+            }
+
+            if (!Guid.TryParse(purchaseInfo.TransactionId, out var transactionIdGuid))
+            {
+                Debug.LogError($"[{nameof(StyngPurchaseStrategy)}] Transaction id not in a Guid format, check the purchase information data and try again.");
+                NotifyPopup?.Invoke(this, new EventArgs());
+                yield break;
+            }
+
+            yield return StoreManager.Instance.StoreInstance.CancelPendingTransaction(JWT_Token.Token, jsonConfig.XApiToken, appIdGuid, transactionIdGuid, () =>
+            {
+                UpdateSender?.Invoke();
+                NotifyPopup?.Invoke(this, new EventArgs());
+
+            }, (error) =>
+            {
+                Debug.LogError(error.Errors);
+                main.OnBuyError(error);
+                NotifyPopup?.Invoke(this, new EventArgs());
+            });
+        }
+
+        private PurchaseInfo ConvertData(NFTBuyInfo data) =>
+           new()
+           {
+               LedgerId = data.NftLedgerId,
+               ProductId = Guid.Parse(data.NftCollectionId),
+               TransactionId = data.TransactionId,
+               ProductName = data.NftCollectionName,
+               UserId = data.ExternalUserId
+           };
+    }
+}
