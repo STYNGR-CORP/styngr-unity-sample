@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assets", "Assets.csproj", "{1DD021D6-8585-2557-19C4-C3C3BA8503AA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Styngr", "Styngr.csproj", "{FF4F85F4-FAEC-6396-D584-664B717DBDE4}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1DD021D6-8585-2557-19C4-C3C3BA8503AA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1DD021D6-8585-2557-19C4-C3C3BA8503AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1DD021D6-8585-2557-19C4-C3C3BA8503AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1DD021D6-8585-2557-19C4-C3C3BA8503AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FF4F85F4-FAEC-6396-D584-664B717DBDE4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FF4F85F4-FAEC-6396-D584-664B717DBDE4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FF4F85F4-FAEC-6396-D584-664B717DBDE4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FF4F85F4-FAEC-6396-D584-664B717DBDE4}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

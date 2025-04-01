@@ -1,0 +1,14 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="SelectPlaylist" src="project://database/Assets/GemHunterMatch/UI/UI%20Toolkit/SelectPlaylist.uxml?fileID=9197481963319205126&amp;guid=8bcf93ff5c7ef6a45bee8e829c5a2b1e&amp;type=3#SelectPlaylist" />
+    <Style src="project://database/Assets/GemHunterMatch/UI/MainUI.uss?fileID=7433441132597879392&amp;guid=1b2947054596e714da0a2b077220e36f&amp;type=3#MainUI" />
+    <ui:VisualElement name="Root" style="flex-grow: 1; position: absolute; left: 0; top: 0; right: 0; bottom: 0; align-items: auto; align-self: center;">
+        <ui:VisualElement name="MainLogo" style="max-width: none; max-height: none; height: 452px; width: 512px;" />
+        
+        <ui:Instance template="SelectPlaylist" name="SelectPlaylist" style="height: 100px; width: 400px; margin-bottom: 20px; align-self: center; font-size: 40px;"/>
+        <ui:VisualElement name="LevelSelectionTitle" style="flex-direction: column;">
+            <ui:Label tabindex="-1" text="Level Selection" display-tooltip-when-elided="true" />
+        </ui:VisualElement>
+        <ui:VisualElement name="LevelSelectionContainer" />
+    </ui:VisualElement>
+    <ui:VisualElement name="Cover" picking-mode="Ignore" style="flex-grow: 1; position: absolute; left: 0; top: 0; right: 0; bottom: 0; opacity: 0;" />
+</ui:UXML>

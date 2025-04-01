@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/UI%20Toolkit/RadioStripe.uss?fileID=7433441132597879392&amp;guid=850976e4db736164da7f6c3d34dc3463&amp;type=3#RadioStripe" />
+    <ui:VisualElement name="Border" style="flex-grow: 1; background-image: url(&quot;project://database/Assets/Images/Radio/StripeRadio/RadioStripeBorder.png?fileID=21300000&amp;guid=bc36d549f707517408a5773387b03eb5&amp;type=3#RadioStripeBorder&quot;); width: 20%; background-color: rgba(0, 0, 0, 0); border-top-width: 0; border-left-color: rgba(0, 0, 0, 0); border-right-color: rgba(0, 0, 0, 0); border-top-color: rgba(0, 0, 0, 0); border-bottom-color: rgba(0, 0, 0, 0); -unity-slice-left: 2; -unity-slice-top: 2; -unity-slice-right: 2; -unity-slice-bottom: 2; -unity-slice-scale: -1px; -unity-background-image-tint-color: rgb(0, 80, 138); height: 10%; max-width: 20%; max-height: 10%; left: 78%; top: 88%; -unity-background-scale-mode: stretch-to-fill;">
+        <ui:VisualElement name="Content" style="flex-grow: 1; width: auto; height: auto; bottom: auto; left: auto; top: auto; background-image: url(&quot;project://database/Assets/Images/Radio/GradientBgr.png?fileID=2800000&amp;guid=ff568797b72f1b24b96d3dbd9f73d05d&amp;type=3#GradientBgr&quot;); -unity-slice-scale: 1px; align-self: auto; max-height: initial; max-width: initial; flex-direction: row;">
+            <ui:VisualElement name="ImageBorder" style="flex-grow: 1; width: 27%; max-width: 27%; max-height: 100%; height: 100%; background-image: url(&quot;project://database/Assets/Images/Radio/CoverImageBorder.png?fileID=21300000&amp;guid=8ea8ecd8e2c701c4b83a5e4574410de8&amp;type=3#CoverImageBorder&quot;); -unity-slice-left: 3; -unity-slice-top: 3; -unity-slice-right: 3; -unity-slice-bottom: 3; -unity-slice-scale: -4px; -unity-background-image-tint-color: rgb(70, 198, 248); min-width: 27%; min-height: 100%;">
+                <ui:VisualElement name="CoverImage" style="flex-grow: 1; -unity-background-image-tint-color: rgb(25, 26, 30); background-image: url(&quot;project://database/Assets/GemHunterMatch/VFX/Radial%20Wrap/Effect.png?fileID=21300000&amp;guid=fd6bc77b19f52ca47aa9954486bcd441&amp;type=3#Effect&quot;); width: auto; height: auto; max-height: none; -unity-slice-left: 3; -unity-slice-top: 3; -unity-slice-right: 3; -unity-slice-bottom: 3; -unity-slice-scale: -3px;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="MidContent" style="flex-grow: 1; margin-left: 5%;">
+                <ui:Label tabindex="-1" text="Loading..." parse-escape-sequences="true" display-tooltip-when-elided="true" name="TrackName" class="LabelStyle" style="font-size: 25%; width: auto;" />
+                <ui:Label tabindex="-1" text="Please Wait..." parse-escape-sequences="true" display-tooltip-when-elided="true" name="ArtistName" class="LabelStyle" style="font-size: 15%;" />
+                <ui:VisualElement name="Controls" style="flex-grow: 1; flex-direction: row; height: 24%; max-height: 24%; min-height: 24%;">
+                    <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" enable-rich-text="true" name="PlayPause" class="button" />
+                    <ui:Toggle name="MuteToggle" class="toggle" />
+                    <ui:Slider name="VolumeSlider" class="slider" />
+                </ui:VisualElement>
+            </ui:VisualElement>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>
