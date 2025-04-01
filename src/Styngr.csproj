@@ -175,9 +175,9 @@
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\UI_Spinner.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\CSCore.Ffmpeg.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\avformat-57.dll" />
+    <None Include="Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\avcodec-57.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\avutil-55.dll" />
     <None Include="Packages\StyngrSDK\Styngr.asmdef" />
@@ -529,12 +529,12 @@
       <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1\Editor\Data\PlaybackEngines\WindowsStandaloneSupport\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="VoltRpc.Extension.Memory">
-      <HintPath>Library\PackageCache\org.nuget.voltrpc.extension.memory@1.1.0\netstandard2.1\VoltRpc.Extension.Memory.dll</HintPath>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>Library\PackageCache\org.nuget.newtonsoft.json@13.0.3\Newtonsoft.Json.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="StyngrSDK">
-      <HintPath>Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll</HintPath>
+    <Reference Include="VoltRpc.Extension.Memory">
+      <HintPath>Library\PackageCache\org.nuget.voltrpc.extension.memory@1.1.0\netstandard2.1\VoltRpc.Extension.Memory.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="VoltRpc.Extension.Vectors">
@@ -559,6 +559,10 @@
     </Reference>
     <Reference Include="Unity.Plastic.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@2.6.0\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>Assets\Packages\WebSocketSharp-netstandard.1.0.1\lib\netstandard2.0\websocket-sharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Plastic.Newtonsoft.Json">
@@ -589,10 +593,6 @@
       <HintPath>Library\PackageCache\org.nuget.voltrpc@3.1.0\netstandard2.1\VoltRpc.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="Newtonsoft.Json">
-      <HintPath>Library\PackageCache\com.unity.nuget.newtonsoft-json@3.2.1\Runtime\Newtonsoft.Json.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="Unity.VisualScripting.TextureAssets">
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.4\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
       <Private>False</Private>
@@ -601,12 +601,12 @@
       <HintPath>Assets\NuGet\Editor\NugetForUnity.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="websocket-sharp">
-      <HintPath>Assets\Packages\WebSocketSharp-netstandard.1.0.1\lib\netstandard2.0\websocket-sharp.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\org.nuget.system.runtime.compilerservices.unsafe@4.5.3\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="StyngrSDK">
+      <HintPath>Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">
