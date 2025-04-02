@@ -7,7 +7,7 @@ namespace Match3
     {
         private void Awake()
         {
-            SceneManager.LoadScene(1, LoadSceneMode.Single);
+            SceneManager.LoadScene(SceneName.Main.ToString(), LoadSceneMode.Single);
         }
     }
 }

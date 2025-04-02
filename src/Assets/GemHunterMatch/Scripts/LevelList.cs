@@ -98,6 +98,14 @@ namespace Match3
                         buildListChange = true;
                     }
 
+                    var enabledBuildLevels = Array.FindAll(buildLevels, level => level.enabled);
+                    var enabledIdx = Array.FindIndex(enabledBuildLevels, scene => scene.path == scenePath);
+
+                    if (buildLevels[idx].enabled && idx != enabledIdx)
+                    {
+                        idx = enabledIdx;
+                    }
+
                     levels[i] = idx;
                 }
 
