@@ -175,9 +175,9 @@
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\UI_Spinner.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\CSCore.Ffmpeg.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\avformat-57.dll" />
+    <None Include="Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\avcodec-57.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\avutil-55.dll" />
     <None Include="Packages\StyngrSDK\Styngr.asmdef" />
@@ -533,10 +533,6 @@
       <HintPath>Library\PackageCache\org.nuget.voltrpc.extension.memory@1.1.0\netstandard2.1\VoltRpc.Extension.Memory.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="StyngrSDK">
-      <HintPath>Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="VoltRpc.Extension.Vectors">
       <HintPath>Library\PackageCache\org.nuget.voltrpc.extension.vectors@1.1.0\netstandard2.1\VoltRpc.Extension.Vectors.dll</HintPath>
       <Private>False</Private>
@@ -553,12 +549,20 @@
       <HintPath>Library\PackageCache\com.unity.collections@1.2.4\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="StyngrSDK">
+      <HintPath>Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="unityplastic">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@2.6.0\Lib\Editor\unityplastic.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Plastic.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@2.6.0\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>Assets\Packages\WebSocketSharp-netstandard.1.0.1\lib\netstandard2.0\websocket-sharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Plastic.Newtonsoft.Json">
@@ -599,10 +603,6 @@
     </Reference>
     <Reference Include="NugetForUnity">
       <HintPath>Assets\NuGet\Editor\NugetForUnity.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="websocket-sharp">
-      <HintPath>Assets\Packages\WebSocketSharp-netstandard.1.0.1\lib\netstandard2.0\websocket-sharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">

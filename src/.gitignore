@@ -402,3 +402,12 @@ Temp/
 
 #Unity UserSettings folder
 UserSettings/
+
+#Dlls and Lib files
+Library/
+Packages/StyngrSDK/Runtime/Plugins/CSCore/*.dll
+
+#Unity3D generated meta files
+*.pidb.meta
+*.pdb.meta
+*.mdb.meta

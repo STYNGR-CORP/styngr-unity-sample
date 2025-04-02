@@ -78,6 +78,7 @@ namespace Assets.Scripts
             // TODO: Load gem hunter scene
             if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
+                SceneManager.LoadScene(1);
                 return;
             }
 
@@ -86,7 +87,7 @@ namespace Assets.Scripts
             //Do some simple encoding
             byte[] bytesToEncode = Encoding.UTF8.GetBytes(configJson);
             binWriter.Write(Convert.ToBase64String(bytesToEncode));
-            SceneManager.LoadScene(SceneName.StripeRadioSampleScene.ToString());
+            SceneManager.LoadScene(1);
         }
 
         private IEnumerator WaitForBackgroundPlayer()
