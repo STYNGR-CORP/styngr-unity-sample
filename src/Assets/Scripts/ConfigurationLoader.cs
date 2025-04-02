@@ -21,6 +21,7 @@ namespace Assets.Scripts
     {
         private const string HostLabelTag = "HostLabel";
         private const string AppDataConfigName = "Config.bin";
+        private const int DefaultInitScene = 1;
 
         private string appDataConfigPath;
 
@@ -78,7 +79,7 @@ namespace Assets.Scripts
             // TODO: Load gem hunter scene
             if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
-                SceneManager.LoadScene(1);
+                SceneManager.LoadScene(DefaultInitScene);
                 return;
             }
 
@@ -87,7 +88,7 @@ namespace Assets.Scripts
             //Do some simple encoding
             byte[] bytesToEncode = Encoding.UTF8.GetBytes(configJson);
             binWriter.Write(Convert.ToBase64String(bytesToEncode));
-            SceneManager.LoadScene(1);
+            SceneManager.LoadScene(DefaultInitScene);
         }
 
         private IEnumerator WaitForBackgroundPlayer()

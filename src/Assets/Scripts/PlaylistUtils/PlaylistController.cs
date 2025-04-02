@@ -101,6 +101,7 @@ namespace Assets.Scripts.PlaylistUtils
 
             yield return StyngrSDK.GetPlaylists(Token, playlistInfo => allPlaylists = allPlaylists.Union(playlistInfo.Playlists).ToList(),
                 errorInfo => errorInfos.Add(errorInfo));
+
             yield return StyngrSDK.GetRoyaltyFreePlaylists(Token, playlistInfo => allPlaylists = allPlaylists.Union(playlistInfo.Playlists).ToList(),
                 errorInfo => errorInfos.Add(errorInfo));
 
