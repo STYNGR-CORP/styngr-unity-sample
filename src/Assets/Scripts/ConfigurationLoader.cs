@@ -78,6 +78,7 @@ namespace Assets.Scripts
             // TODO: Load gem hunter scene
             if (Application.platform == RuntimePlatform.WebGLPlayer)
             {
+                SceneManager.LoadScene(1);
                 return;
             }
 
