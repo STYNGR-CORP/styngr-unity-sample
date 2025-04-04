@@ -96,14 +96,25 @@ namespace Assets.Scripts.PlaylistUtils
         /// <returns><see cref="IEnumerator"/> so that the Unity coroutine knows where to continue exectuion.</returns>
         public virtual IEnumerator SelectAdFundedPlaylist()
         {
+            var errorInfos = new List<ErrorInfo>();
             var allPlaylists = new List<Playlist>();
 
-            yield return StyngrSDK.GetPlaylists(Token, playlistInfo => allPlaylists = allPlaylists.Union(playlistInfo.Playlists).ToList(), OnFailedResponse);
-            yield return StyngrSDK.GetRoyaltyFreePlaylists(Token, playlistInfo => allPlaylists = allPlaylists.Union(playlistInfo.Playlists).ToList(), OnFailedResponse);
+            yield return StyngrSDK.GetPlaylists(Token, playlistInfo => allPlaylists = allPlaylists.Union(playlistInfo.Playlists).ToList(),
+                errorInfo => errorInfos.Add(errorInfo));
 
-            var adFundedPlaylists = allPlaylists.Where(x => x.MonetizationType == MonetizationType.EXTERNAL_AD_FUNDED || x.MonetizationType == MonetizationType.INTERNAL_AD_FUNDED).ToList();
+            yield return StyngrSDK.GetRoyaltyFreePlaylists(Token, playlistInfo => allPlaylists = allPlaylists.Union(playlistInfo.Playlists).ToList(),
+                errorInfo => errorInfos.Add(errorInfo));
 
-            OnPlaylistsReceived(adFundedPlaylists);
+            if (errorInfos.Count == 2)
+            {
+                Debug.Log("No playlists available.");
+            }
+            else
+            {
+                var adFundedPlaylists = allPlaylists.Where(x => x.MonetizationType == MonetizationType.EXTERNAL_AD_FUNDED || x.MonetizationType == MonetizationType.INTERNAL_AD_FUNDED).ToList();
+
+                OnPlaylistsReceived(adFundedPlaylists);
+            }
         }
 
         /// <summary>
