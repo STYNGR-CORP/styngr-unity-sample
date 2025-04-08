@@ -14,7 +14,7 @@
                     <ui:VisualElement name="Controls" style="flex-grow: 1; flex-direction: row; height: 33%; max-height: 33%; min-height: 33%; border-bottom-width: 0;">
                         <ui:Button parse-escape-sequences="true" display-tooltip-when-elided="true" enable-rich-text="true" name="PlayPause" class="button" style="margin-right: 0; width: 61px; -unity-slice-scale: 1px;" />
                         <ui:Toggle name="MuteToggle" class="toggle" style="margin-left: 0; margin-right: 0;" />
-                        <ui:Slider name="VolumeSlider" high-value="1" class="slider" style="width: 50%; max-width: 50%; min-width: 51px;" />
+                        <ui:Slider name="VolumeSlider" high-value="1" low-value="0" class="slider" style="width: 50%; max-width: 50%; min-width: 51px;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
                 <ui:VisualElement name="RightContent" style="flex-grow: 1; flex-direction: column; height: 100%; max-height: 100%; min-height: 100%; -unity-background-image-tint-color: rgb(145, 145, 145); max-width: 30%; min-width: 30%; width: 30%; position: relative; flex-wrap: nowrap; justify-content: space-between; align-items: flex-end; flex-shrink: 1;">
