@@ -30,6 +30,25 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Store.Utility
         }
 
         /// <summary>
+        /// Gets the image for the texture.
+        /// </summary>
+        /// <param name="image">Image to change.</param>
+        /// <param name="url">URL to the image.</param>
+        /// <returns><see cref="IEnumerator"/> for sequential handling of unity frame.</returns>
+        public static IEnumerator GetTexture(this UnityEngine.UIElements.Image image, string url)
+        {
+            using var getTextureRequest = UnityWebRequestTexture.GetTexture(url);
+            yield return getTextureRequest.SendWebRequest();
+
+            if (image != null && getTextureRequest.result == UnityWebRequest.Result.Success)
+            {
+                var coverImageTexture = DownloadHandlerTexture.GetContent(getTextureRequest);
+                image.style.color = Color.white;
+                image.sprite = Sprite.Create(coverImageTexture, new Rect(0, 0, coverImageTexture.width, coverImageTexture.height), Vector2.zero);
+            }
+        }
+
+        /// <summary>
         /// Fades the canvas group.
         /// </summary>
         /// <param name="canvasGroup">Canvas group to fade.</param>
