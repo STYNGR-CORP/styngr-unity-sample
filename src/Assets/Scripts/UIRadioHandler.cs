@@ -324,7 +324,10 @@ namespace Assets.Scripts
             // init UI elements
             playButton = rootVisualElement.Q<Button>("PlayPause");
             muteToggle = rootVisualElement.Q<Toggle>("MuteToggle");
+
             volumeSlider = rootVisualElement.Q<Slider>("VolumeSlider");
+            volumeSlider.value = 0.5f;
+
             likeButton = rootVisualElement.Q<Button>("Like");
             skipButton = rootVisualElement.Q<Button>("Skip");
             subscribeButton = rootVisualElement.Q<Button>("Subscribe");
