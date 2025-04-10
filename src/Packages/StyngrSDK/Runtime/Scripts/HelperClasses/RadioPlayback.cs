@@ -506,7 +506,6 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             subscribeButtonRegistrationName = registrationName;
             this.subscriptionManager = subscriptionManager;
             this.subscriptionManager.SubscriptionExpired += OnSubscriptionExpired;
-            //this.subscribeButton = subscribeButton;
             subscriptionManager.RegisterComponentForActivityManagement(registrationName, subscribeButton);
         }
 
