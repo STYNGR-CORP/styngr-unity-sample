@@ -498,6 +498,18 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         }
 
         /// <summary>
+        /// Initializes the subscription related components (UIToolkit).
+        /// </summary>
+        /// <param name="subscriptionManager">Active subscription manager.</param>
+        public virtual void InitSubscriptionComponents(SubscriptionManager subscriptionManager, UnityEngine.UIElements.Button subscribeButton, string registrationName)
+        {
+            subscribeButtonRegistrationName = registrationName;
+            this.subscriptionManager = subscriptionManager;
+            this.subscriptionManager.SubscriptionExpired += OnSubscriptionExpired;
+            subscriptionManager.RegisterComponentForActivityManagement(registrationName, subscribeButton);
+        }
+
+        /// <summary>
         /// Gets the playback state;
         /// </summary>
         /// <returns>The playback state</returns>
@@ -526,6 +538,19 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// <param name="image">The image texture will be changed if the texure if fetched successfully.</param>
         /// <returns><see cref="IEnumerator"/> so that the unity coroutine knows where to continue the execution.</returns>
         public IEnumerator GetCoverImage(Image image)
+        {
+            if (RadioType == MusicType.LICENSED)
+            {
+                yield return image.GetTexture(currentTrack.CoverImageURL);
+            }
+        }
+
+        /// <summary>
+        /// Gets the cover image and sets it to the forwared image graphic.
+        /// </summary>
+        /// <param name="image">The image texture will be changed if the texure if fetched successfully.</param>
+        /// <returns><see cref="IEnumerator"/> so that the unity coroutine knows where to continue the execution.</returns>
+        public IEnumerator GetCoverImage(UnityEngine.UIElements.Image image)
         {
             if (RadioType == MusicType.LICENSED)
             {

@@ -28,7 +28,7 @@
     border-right-width: 0;
     border-bottom-width: 0;
     border-left-width: 0;
-    background-image: url("project://database/Assets/Images/Radio/mute.png?fileID=21300000&guid=e02151635f9efeb4e820bf22716a97fe&type=3#mute");
+    background-image: url("project://database/Assets/Images/Radio/unmuted.png?fileID=21300000&amp;guid=c926ba6b0f902bd47bdcd54ac8314c39&type=3#unmuted");
     width: 15%;
     height: auto;
     margin-top: 0;

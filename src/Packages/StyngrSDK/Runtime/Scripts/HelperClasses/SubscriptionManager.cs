@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UIElements;
 using WebSocketSharp;
 using static Packages.StyngrSDK.Runtime.Scripts.Radio.JWT_Token;
 
@@ -27,6 +28,13 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// for which the activity will be managed based on the user's active subscription.
         /// </summary>
         private readonly Dictionary<string, GameObject> nameToComponentForActivityManagement = new();
+
+
+        /// <summary>
+        /// Dictionary of registered unity UI Toolkit buttons
+        /// for which the activity will be managed based on the user's active subscription.
+        /// </summary>
+        private readonly Dictionary<string, Button> nameToComponentForActivityManagementNew = new();
 
         /// <summary>
         /// An active user subscription stored from the last check.
@@ -64,12 +72,30 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         }
 
         /// <summary>
+        /// Registers the UI Toolkit component for the activity management.
+        /// </summary>
+        /// <param name="componentName">The name of the component.</param>
+        /// <param name="component">The game object component.</param>
+        public void RegisterComponentForActivityManagement(string componentName, Button component)
+        {
+            if (!nameToComponentForActivityManagementNew.TryAdd(componentName, component))
+            {
+                Debug.LogWarning($"[{nameof(SubscriptionManager)}]: Component with the name '{componentName}' has already been added. Skipping.");
+            }
+        }
+
+        /// <summary>
         /// Unregisters the component from the activity management.
         /// </summary>
         /// <param name="componentName">The name of the component.</param>
         public void UnregisterComponentForActivityManagement(string componentName)
         {
             if (nameToComponentForActivityManagement.Remove(componentName))
+            {
+                Debug.LogWarning($"[{nameof(SubscriptionManager)}]: Component with the name '{componentName}' doesn't exist. Skipping.");
+            }
+
+            if (nameToComponentForActivityManagementNew.Remove(componentName))
             {
                 Debug.LogWarning($"[{nameof(SubscriptionManager)}]: Component with the name '{componentName}' doesn't exist. Skipping.");
             }
@@ -234,6 +260,11 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             foreach (var component in nameToComponentForActivityManagement.Values)
             {
                 component.SetActive(isActive);
+            }
+
+            foreach (var component in nameToComponentForActivityManagementNew.Values)
+            {
+                component.style.visibility = Visibility.Hidden;
             }
         }
 
