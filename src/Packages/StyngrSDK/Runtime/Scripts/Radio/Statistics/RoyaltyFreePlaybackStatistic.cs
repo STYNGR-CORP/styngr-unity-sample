@@ -53,5 +53,13 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics
             UsageReportId = usageReportId;
             Playlist = playlist;
         }
+
+        public RoyaltyFreePlaybackStatistic(RoyaltyFreePlaybackStatistic other)
+        {
+            duration = other.duration;
+            endStreamReason = other.endStreamReason;
+            UsageReportId = other.UsageReportId;
+            Playlist = other.Playlist;
+        }
     }
 }

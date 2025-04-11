@@ -9,6 +9,7 @@ using Styngr;
 using Styngr.DTO.Response.SubscriptionsAndBundles;
 using Styngr.Enums;
 using Styngr.Exceptions;
+using Styngr.Interfaces;
 using Styngr.Model.Radio;
 using System;
 using System.Collections;
@@ -17,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 using static Packages.StyngrSDK.Runtime.Scripts.Radio.JWT_Token;
 
 namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
@@ -671,11 +673,25 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             }
             else
             {
-                return new RoyaltyFreePlaybackStatistic(
-                    GetTrackProgressSeconds(),
-                    endStreamReason,
-                    (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
-                    playlists.FirstOrDefault());
+                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
+                {
+                    return new RoyaltyFreePlaybackStatistic(
+                        GetTrackProgressSeconds(),
+                        endStreamReason,
+                        (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
+                        playlists.FirstOrDefault());
+                }
+                else
+                {
+                    return new RoyaltyFreeAdPlaybackStatistic(
+                        new RoyaltyFreePlaybackStatistic(
+                            GetTrackProgressSeconds(),
+                            endStreamReason,
+                            (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
+                            playlists.FirstOrDefault()),
+                        UseType.ad,
+                        (currentTrack as RoyaltyFreeTrackInfo).AdId);
+                }
             }
         }
 

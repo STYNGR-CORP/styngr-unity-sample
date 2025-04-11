@@ -40,10 +40,30 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies
                 yield break;
             }
 
-            var royaltyFreeStatisticData = playbackStatisticData as RoyaltyFreePlaybackStatistic;
-            var playbackStatisticRequest = new RoyaltyFreeStatisticRequest(royaltyFreeStatisticData.PlaytimeInSeconds, royaltyFreeStatisticData.TrackStatus, royaltyFreeStatisticData.UsageReportId);
+            if (playbackStatisticData is RoyaltyFreeAdPlaybackStatistic)
+            {
+                var royaltyFreeStatisticData = playbackStatisticData as RoyaltyFreePlaybackStatistic;
+                var royaltyFreeTrackStatisticsRequestPart = new RoyaltyFreeStatisticRequest(royaltyFreeStatisticData.PlaytimeInSeconds, royaltyFreeStatisticData.TrackStatus, null);
 
-            yield return Styngr.StyngrSDK.StopRoyaltyFreePlaylist(Token, playlistIdGuid, playbackStatisticRequest, onSuccess, onFail);
+                var royaltyFreeAdStatisticData = playbackStatisticData as RoyaltyFreeAdPlaybackStatistic;
+                var royaltyFreeAdStatisticsRequestPart = new RoyaltyFreeAdStatisticRequest(
+                    royaltyFreeAdStatisticData.UseType,
+                    royaltyFreeAdStatisticData.AdId,
+                    new Guid(royaltyFreeAdStatisticData.Playlist.GetId()),
+                    royaltyFreeAdStatisticData.Duration,
+                    EndAdStreamReason.EndOfSession);
+
+                var playbackStatisticRequest = new RoyaltyFreeCompleteAdStatisticRequest(royaltyFreeTrackStatisticsRequestPart, royaltyFreeAdStatisticsRequestPart);
+
+                yield return Styngr.StyngrSDK.StopRoyaltyFreePlaylist(Token, playlistIdGuid, playbackStatisticRequest, onSuccess, onFail);
+            }
+            else
+            {
+                var royaltyFreeStatisticData = playbackStatisticData as RoyaltyFreePlaybackStatistic;
+                var playbackStatisticRequest = new RoyaltyFreeStatisticRequest(royaltyFreeStatisticData.PlaytimeInSeconds, royaltyFreeStatisticData.TrackStatus, royaltyFreeStatisticData.UsageReportId);
+
+                yield return Styngr.StyngrSDK.StopRoyaltyFreePlaylist(Token, playlistIdGuid, playbackStatisticRequest, onSuccess, onFail);
+            }
         }
 
         private IEnumerator GetTrack(Action<TrackInfoBase> onSuccess, Action<ErrorInfo> onFail, PlaybackStatisticBase playbackStatisticData)
@@ -53,17 +73,37 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies
                 yield break;
             }
 
-            var royaltyFreeStatisticData = playbackStatisticData as RoyaltyFreePlaybackStatistic;
-            var playbackStatisticRequest = new RoyaltyFreeStatisticRequest(royaltyFreeStatisticData.PlaytimeInSeconds, royaltyFreeStatisticData.TrackStatus, royaltyFreeStatisticData.UsageReportId);
+            if (playbackStatisticData is RoyaltyFreeAdPlaybackStatistic)
+            {
+                var royaltyFreeStatisticData = playbackStatisticData as RoyaltyFreePlaybackStatistic;
+                var royaltyFreeTrackStatisticsRequestPart = new RoyaltyFreeStatisticRequest(royaltyFreeStatisticData.PlaytimeInSeconds, royaltyFreeStatisticData.TrackStatus, null);
 
-            yield return Styngr.StyngrSDK.GetNextTrack(Token, playlistIdGuid, playbackStatisticRequest, onSuccess, onFail);
+                var royaltyFreeAdStatisticData = playbackStatisticData as RoyaltyFreeAdPlaybackStatistic;
+                var royaltyFreeAdStatisticsRequestPart = new RoyaltyFreeAdStatisticRequest(
+                    royaltyFreeAdStatisticData.UseType,
+                    royaltyFreeAdStatisticData.AdId,
+                    new Guid(royaltyFreeAdStatisticData.Playlist.GetId()),
+                    royaltyFreeAdStatisticData.Duration,
+                    EndAdStreamReason.EndOfSession);
+
+                var playbackStatisticRequest = new RoyaltyFreeCompleteAdStatisticRequest(royaltyFreeTrackStatisticsRequestPart, royaltyFreeAdStatisticsRequestPart);
+
+                yield return Styngr.StyngrSDK.GetNextTrack(Token, playlistIdGuid, playbackStatisticRequest, onSuccess, onFail);
+            }
+            else
+            {
+                var royaltyFreeStatisticData = playbackStatisticData as RoyaltyFreePlaybackStatistic;
+                var playbackStatisticRequest = new RoyaltyFreeStatisticRequest(royaltyFreeStatisticData.PlaytimeInSeconds, royaltyFreeStatisticData.TrackStatus, royaltyFreeStatisticData.UsageReportId);
+
+                yield return Styngr.StyngrSDK.GetNextTrack(Token, playlistIdGuid, playbackStatisticRequest, onSuccess, onFail);
+            }
         }
 
         private bool AreParametersValid(PlaybackStatisticBase playbackStatisticData, out Guid playlistIdGuid)
         {
             if (playbackStatisticData is not RoyaltyFreePlaybackStatistic)
             {
-                throw new ArgumentException($"[{nameof(RoyaltyFreeContentStrategy)}] {nameof(playbackStatisticData)} must be of type {typeof(RoyaltyFreePlaybackStatistic)}.");
+                throw new ArgumentException($"[{nameof(RoyaltyFreeContentStrategy)}] {nameof(playbackStatisticData)} must be of either of type {typeof(RoyaltyFreePlaybackStatistic)} or {typeof(RoyaltyFreeAdPlaybackStatistic)}.");
             }
 
             if (!Guid.TryParse(playbackStatisticData.Playlist.GetId(), out playlistIdGuid))

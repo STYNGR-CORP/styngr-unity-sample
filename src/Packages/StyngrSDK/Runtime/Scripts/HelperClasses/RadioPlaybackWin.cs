@@ -381,11 +381,25 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             }
             else
             {
-                return new RoyaltyFreePlaybackStatistic(
-                    GetTrackProgressSeconds(),
-                    endStreamReason,
-                    (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
-                    playlists.FirstOrDefault());
+                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
+                {
+                    return new RoyaltyFreePlaybackStatistic(
+                        GetTrackProgressSeconds(),
+                        endStreamReason,
+                        (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
+                        playlists.FirstOrDefault());
+                }
+                else
+                {
+                    return new RoyaltyFreeAdPlaybackStatistic(
+                        new RoyaltyFreePlaybackStatistic(
+                            GetTrackProgressSeconds(),
+                            endStreamReason,
+                            (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
+                            playlists.FirstOrDefault()),
+                        UseType.ad,
+                        (currentTrack as RoyaltyFreeTrackInfo).AdId);
+                }
             }
 
         }
@@ -618,7 +632,6 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             }
 
             OnErrorOccured?.Invoke(this, errorInfo);
-
         }
     }
 }
