@@ -4,7 +4,7 @@
 - **Unity:** Version 2022.3.55f1 or later  
 - **Supported Platforms:** WebGL and PC builds  
 
-You will be provided with two separate packages:
+You will be provided with 3 separate packages:
 1. **Styngr SDK** (`StyngrSDK.7z`)
 2. **Gem Hunter Sample** (`GemHunterSample.unitypackage`)
 3. **CSCore and FFMpeg Libraries Build** (`CSCore.7z`)
@@ -67,7 +67,7 @@ The sample supports both WebGL and PC platforms.
    - **Unity Web Browser CEF Engine** – v2.0.2-113.3.1  
    - **Unity Web Browser CEF Engine (Windows x64)** – v2.0.2-113.3.1  
    - **Unity Web Browser Pipes Communication** – v1.0.1  
-   
+
 ---
 
 ### **6. Install Additional Unity Packages**
