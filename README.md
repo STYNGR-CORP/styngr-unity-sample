@@ -1,63 +1,109 @@
-# Installation and SetUp
- ## Requirements:
-- Unity: 2022.3.55f1 or later
-- Supports: WebGL and PC builds
+## **Installation and Setup**
 
-You will be peovided with two separate packages the first is Styngr SDK package/library (`StyngrSDK.7z`) and the second is a Gem Hunter sample (`GemHunterSample.unitypackage`). Sample supports a both WebGL and PC platforms.
+### **Requirements**
+- **Unity:** Version 2022.3.55f1 or later  
+- **Supported Platforms:** WebGL and PC builds  
 
-## Import Styngr SDK
-Unzip `StyngrSDK.7z` to a preferred location. In `Unity Editor`, open `Package Manager`, click the `+` button, and select `Add package from disk`. Navigate to the extracted folder and select the `package.json` file.
-***
-## Import GemHunterSample.unitypackage package
-In the `Unity editor`, Right-click on `Assets > Import Package > Custom Package`. Navigate to the appropriate .unitypackage (`GemHunterSample.unitypackage`). `The Import Unity Package` dialog will appear allowing us to choose appropriate assets (if this is the first time you are importing example assets, import all of them) and click `Import`.
-***
-## Newtonsoft.Json installation
-In the `Unity Editor` go to `NuGet` tab, then `Manage NuGet packages` and find `Newtonsoft.json` and install it. Required verision is `13.0.3`.
+You will be provided with two separate packages:
+1. **Styngr SDK** (`StyngrSDK.7z`)
+2. **Gem Hunter Sample** (`GemHunterSample.unitypackage`)
+3. **CSCore and FFMpeg Libraries Build** (`CSCore.7z`)
 
-Note:
-After importing the `GemHunterSample.unitypackage`, `NuGet` main menu item might not appear. To fix this, restart the `Unity Editor`.
-***
-## Voltstro Studios (Unity Web Browser) Installation
+The sample supports both WebGL and PC platforms.
 
-1. In `Unity Editor`, go to `Project Settings` open the `Package Manager` section and set the `Scoped Registry`.
+---
 
-Parameters:
-* Name:	Voltstro UPM
-* URL:	https://upm-pkgs.voltstro.dev
-* Scopes:
-  * dev.voltstro
-  * org.nuget
-  * com.cysharp.unitask
-2. Open `Package Manager` and then select `Packages: My Registries` and install required `Voltstro` packages: 
-    * Unity Web Browser - v2.0.2
-    * Unity Web Browser CEF Engine - v2.0.2-113.3.1
-    * Unity Web Browser CEF Engine (Windows x64) - v2.0.2-113.3.1
-    * Unity Web Browser Pipes Communication - v1.0.1
- ***
-## Install additional packages:
-Open `Package Manager`, then select `Packages: Unity Registry` and install if not already installed:
-* Input System - v1.11.2
-* Mathematics - v1.2.6
-* Universal RP - v14.0.11
-* Visual Effect Graph - v14.0.11
-***
+### **1. Import Styngr SDK**
 
-## Ensure that the following settings are configured correctly:
-Go to *Edit* then choose *Project settings*:
- 
- ### Select *Player* from left menu, then choose *Settings for WebGL*:
+1. Unzip `StyngrSDK.7z` to your preferred location.  
+2. In the Unity Editor, open **Package Manager**.
+3. Click the **+** button and select **Add package from disk**.
+4. Navigate to the extracted folder and select the `package.json` file.
 
-* Resolution and presentation:
-  * WebGL template: Main
-* Other settings:
-  * Active Input Handling: Both
-  * Managed Stripping Level: Minimal
-* Publishing settings:
-  * Comporession format: Disabled
+---
 
- ### Select *Graphics* from left menu:
- * Scriptable Render Pipeline Settings: UniversalRP
-***
+### **2. Import Gem Hunter Sample Package**
 
-## Access token
- To be able to use the SDK, contact `Styngr` to request access to the API servers and receive the required operative data for authentication. Find src\Packages\StyngrSDK\Runtime\tokenConfiguration.json and populate configuration parameters provided by `Styngr`.
+1. In the Unity Editor, right-click in the **Assets** panel.
+2. Go to **Import Package > Custom Package**.
+3. Navigate to `GemHunterSample.unitypackage`.
+4. The **Import Unity Package** dialog will appear. If this is your first time importing the sample assets, select **all** and click **Import**.
+
+---
+
+### **3. CSCore and FFMpeg Libraries Build**
+
+1. Unzip `CSCore.7z`.
+2. Copy all binaries from unziped folder to `/src/Packages/StyngrSDK/Runtime/Plugins/CSCore`.
+
+---
+
+### **4. Install Newtonsoft.Json**
+
+1. In the Unity Editor, go to the **NuGet** tab.
+2. Click **Manage NuGet Packages**.
+3. Search for `Newtonsoft.Json` and install version **13.0.3**.
+
+**Note:** After importing the `GemHunterSample.unitypackage`, the NuGet main menu item may not appear. If this happens, restart the Unity Editor.
+
+---
+
+### **5. Install Voltstro Studios (Unity Web Browser)**
+
+**Note:** If this is already installed, ignore this step.
+
+1. In the Unity Editor, open **Project Settings**.
+2. Go to the **Package Manager** section and add a new **Scoped Registry** with the following details:
+
+   - **Name:** Voltstro UPM  
+   - **URL:** `https://upm-pkgs.voltstro.dev`  
+   - **Scopes:**
+     - `dev.voltstro`
+     - `org.nuget`
+     - `com.cysharp.unitask`
+
+3. Open the **Package Manager**, select **Packages: My Registries**, and install the following packages:
+   - **Unity Web Browser** – v2.0.2  
+   - **Unity Web Browser CEF Engine** – v2.0.2-113.3.1  
+   - **Unity Web Browser CEF Engine (Windows x64)** – v2.0.2-113.3.1  
+   - **Unity Web Browser Pipes Communication** – v1.0.1  
+   
+---
+
+### **6. Install Additional Unity Packages**
+
+1. Open the **Package Manager**.
+2. Select **Packages: Unity Registry**.
+3. Install the following packages if not already present:
+   - **Input System** – v1.1.2  
+   - **Mathematics** – v1.2.6  
+   - **Universal RP (URP)** – v14.0.11  
+   - **Visual Effect Graph** – v14.0.11  
+
+---
+
+### **7. Configure Project Settings**
+
+1. Go to **Edit > Project Settings**.
+2. Under **Player > WebGL Settings**:
+   - **Resolution and Presentation:**
+     - WebGL Template: **Main**
+   - **Other Settings:**
+     - Active Input Handling: **Both**
+     - Managed Stripping Level: **Minimal**
+   - **Publishing Settings:**
+     - Compression Format: **Disabled**
+
+3. Under **Graphics**:
+   - **Scriptable Render Pipeline Settings:** Set to **UniversalRP**
+
+---
+
+### **8. Access Token Setup**
+
+To use the SDK:
+1. Contact **Styngr** to request access to the API servers.
+2. You will receive the necessary authentication details.
+3. Locate the file:  
+   `src\Packages\StyngrSDK\Runtime\tokenConfiguration.json`
+4. Populate the configuration parameters provided by Styngr.

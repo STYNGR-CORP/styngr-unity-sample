@@ -1,83 +1,111 @@
-# Prefabs overview
+## **Prefabs Overview**
 
-We offer two radio prefabs that can be reused:
+We provide two reusable radio prefabs:
 - `StripeInternetRadio.prefab`
 - `UIRadioHandler.prefab`
 
-`Prefabs location: 'Assets/Prefabs/'`
+**Prefabs location:** `Assets/Prefabs/`
 
-## StripeInternetRadio Prefab
+---
 
-**StripeInternetRadio** is a prefab that can be added to the scene, and it provides basic functionalities allowing the player to interact with various audio tracks and playlists and control playback. Supports two platforms: WebGL and Windows.
+### **StripeInternetRadio Prefab**
 
-`Prefab location: 'Assets/Prefabs/StripeInternetRadio.prefab'`
+`StripeInternetRadio` is a prefab that can be added to any scene. It offers basic functionality that allows the player to interact with various audio tracks and playlists, as well as control playback. It supports both **WebGL** and **Windows** platforms.
 
-### Key Components
+**Prefab location:** `Assets/Prefabs/StripeInternetRadio.prefab`
 
-#### **UI Elements**
-- The prefab includes several basic UI elements:
-  - **Skip** for skipping tracks.
-  - **Volume Slider** for adjusting the audio volume.
-  - **Text Display** for showing the name of the current song and artist name.
-  - **Play/Pause** for playing and pausing track from the choosen playlist.
+#### **Key Components**
+
+##### **UI Elements**
+The prefab includes several basic UI elements:
+- **Skip** – Skips to the next track.
+- **Volume Slider** – Adjusts audio volume.
+- **Text Display** – Shows the current song title and artist name.
+- **Play/Pause** – Toggles playback for the selected playlist.
+
+##### **UIRadio.cs Script**
+This custom script provides functionality for:
+- Switching between tracks.
+- Controlling playback (play, pause, skip).
+- Adjusting volume.
+- Displaying track information, etc.
+
+---
+
+### **UIRadioHandler Prefab**
+
+The `UIRadioHandler.prefab` differs from the [`StripeInternetRadio.prefab`](#stripeinternetradio-prefab) in that it uses the **UI Toolkit** for its UI elements.
+
+**Prefab location:** `Assets/Prefabs/UIRadioHandler.prefab`
+
+#### **Key Components**
+
+##### **UI Document**
+- Connects the `StripeRadio.uxml` layout to the `UIRadioHandler` GameObject.
+- Follows the same layout and structure as [`StripeInternetRadio.prefab`](#stripeinternetradio-prefab).
+
+##### **UIRadioHandler.cs Script**
+- Mirrors the behavior of `UIRadio.cs`.
+
+---
+
+## **Gem Hunter Match Sample Flow**
+
+- The user starts the **Gem Hunter** game.
+- On game start, a **Select Playlist** button is displayed on-screen.
+- Clicking **Select Playlist** opens a list of available playlists.
+- The playlist list includes both **royalty-free** and **licensed** playlists. All are monetized via **ad-funded models**.
+- After selecting a playlist, it begins playing in the background as the player enters a level.
+- The [`StripeInternetRadio.prefab`](#stripeinternetradio-prefab) is added to each level to allow continued playback and control:
+  - Players can **play**, **pause**, **skip**, **like**, **mute**, and **unmute** tracks.
+- Playback statistics are sent:
+  - When a track is skipped.
+  - When a track ends and transitions to the next.
+  - When the user changes levels mid-track.
+- If the player switches levels, the previously selected playlist continues playing.
+- If no playlist is selected:
+  - A **random licensed playlist** is automatically selected:
+    - A **random non-premium playlist** for users without a subscription.
+    - A **random premium playlist** for subscribed users.
+
+---
+
+## **Playlist Types**
+
+The **Styngr Server** distinguishes between two playlist types, each with dedicated API endpoints and SDK methods:
+
+- **Licensed Music**
+- **Royalty-Free Music**
+
+The SDK uses different method calls based on the playlist type. These are implemented in classes found in:
+
+```
+src\Packages\StyngrSDK\Runtime\Scripts\Radio\Strategies\
+```
+
+---
+
+## **Monetization Types**
+
+Each **playlist** is associated with one of the following **monetization types**:
+- `INTERNAL AD-FUNDED`
+- `EXTERNAL AD-FUNDED`
+- `PREMIUM`
+
+---
+
+### **Ad Support**
+
+The **Styngr API** tracks the number of songs played by the user. After a pre-defined number of tracks (configured server-side), the server returns an **ad** in place of the next track. 
+
+- Ads are identified in the response via a dedicated flag.
+- **Track** type can be:
+   - `Commercial`
+   - `Music`
+- **Ads must be played in full** — users **cannot skip or switch playlists** while an ad is playing.
+
+For each **playlist** ads can be configured:
+  - Number of tracks before ad break
+  - Number of ads during ad break
   
-#### **UIRadio.cs script**
-- A custom script for:
-  - Switching between tracks.
-  - Controlling playback (play, pause, skip).
-  - Adjusting volume and displaying track information etc.
-
-## UIRadioHandler Prefab
-
-The difference between this one and the [StripeInternetRadio.prefab](#stripeinternetradio-prefab) is that `UIRadioHandler.prefab` uses the new `UI Toolkit` for UI elements.
-
-`Prefab location: 'Assets/Prefabs/UIRadioHandler.prefab'`
-
-### Key Components
-
-#### **UI Document**
-- Defines a component that connects `StripeRadio.uxml` to `UIRadioHandler` game object. The `UIDocument` has the same layout and structure as [StripeInternetRadio.prefab](#stripeinternetradio-prefab).
-  
-#### **UIRadioHanlder.cs script** 
-- This script has the same behavior as the `UIRadio.cs`.
-
-***
-
-# Gem Hunter Match Sample Flow
-
-- User starts GemHunter game
-- After starting the game, there is a `Select Playlist` button on the screen.
-- After clicking on the `Select Playlist`, a list of available playlists opens.
-- The playlist list is a union of available royalty-free and licensed playlists. All playlists have monetization type ad-funded.
-- After selecting the desired playlist, the chosen playlist will be played while playing one of the game levels.
-- [StripeInternetRadio.prefab](#stripeinternetradio-prefab) is added to each level and enables user to listen previously chosen playlist. User can use play/pause/skip/like/mute/unmute actions.
-- Statistics are sent only when a track is skipped, when the current track is finishing and the next one is about to play, or if the user decides to change the level while the track is still active.
-- User can switch levels and previously selected playlist will be played again.
-- If the user does not select any playlist, a random licensed playlist will be played:
-  - Random non-premium playlist if user does not have active subscription.
-  - Random premium playlist if user has active subscription. 
-
-
-# Ad Support
-
-`Styngr API` tracks the number of tracks being played by the player. After a predetermined number of tracks played, defined on the server, the server returns an ad as the response for the next track using a field to indicate it's an ad. The ad must be played and can't be skipped, or the player can't change playlists while the ad is active.
-
-# Playlist types
-
-There are two types of playlists that the `Styngr Server` treats differently with different endpoints. Depending on the playlist type, different `SDK` methods are called. (methods for getting next song/skipping etc.). Classes that encapsulates calls to the `SDK` are located in `\src\Packages\StyngrSDK\Runtime\Scripts\Radio\Strategies\`.
-
-The playlist types are:
-- Licensed music
-- Royalty free music
- 
- Each licensed playlist has monetization type, monetization types are:
- - INTERNAL AD-FUNDED,
- - EXTERNAL AD-FUNDED,
- - PREMIUM
-
-
-
-
-
-
-
+Also, The backend provides the ability to forbid the playback of the ad to a certain age group.
