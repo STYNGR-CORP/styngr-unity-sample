@@ -254,27 +254,58 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
             if (RadioType == MusicType.LICENSED)
             {
-                statisticData = new LicensedPlaybackStatistic(
-                    currentTrack,
-                    playlists.FirstOrDefault(),
-                    currentTrackStartTime,
-                    parameters.duration,
-                    IsCommercialInProgress ? UseType.ad : UseType.streaming,
-                    parameters.isMuted,
-                    parameters.isAutoplay,
-                    parameters.reason,
-                    AppState.Open,
-                    AppStateStart.Active);
+                    if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
+                    {
+                        statisticData = new LicensedPlaybackStatistic(
+                            currentTrack,
+                            playlists.FirstOrDefault(),
+                            currentTrackStartTime,
+                            parameters.duration,
+                            UseType.streaming,
+                            autoplay: parameters.isAutoplay,
+                            mute: parameters.isMuted,
+                            endStreamReason: parameters.reason,
+                            appState: AppState.Open,
+                            appStateStart: AppStateStart.Active);
+                    }
+                    else
+                    {
+                        statisticData = new LicensedAdPlaybackStatistic(
+                            currentTrack,
+                            playlists.FirstOrDefault(),
+                            currentTrackStartTime,
+                            parameters.duration,
+                            UseType.ad,
+                            autoplay: parameters.isAutoplay,
+                            mute: parameters.isMuted,
+                            endStreamReason: EndAdStreamReason.EndOfSession,
+                            appState: AppState.Open,
+                            appStateStart: AppStateStart.Active,
+                            adId: (Guid)(currentTrack as TrackInfo).AdId);
+                    }
             }
             else
             {
-                statisticData = new RoyaltyFreePlaybackStatistic(
-                    parameters.duration,
-                    parameters.reason,
-                    (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
-                    playlists.FirstOrDefault());
+                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
+                {
+                    statisticData = new RoyaltyFreePlaybackStatistic(
+                        parameters.duration,
+                        parameters.reason,
+                        (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
+                        playlists.FirstOrDefault());
+                }
+                else
+                {
+                    statisticData = new RoyaltyFreeAdPlaybackStatistic(
+                        new RoyaltyFreePlaybackStatistic(
+                            parameters.duration,
+                            parameters.reason,
+                            (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
+                            playlists.FirstOrDefault()),
+                        UseType.ad,
+                        (currentTrack as RoyaltyFreeTrackInfo).AdId);
+                }
             }
-
         }
 
         protected override PlaybackStatisticBase GetStatisticsData(EndStreamReason endStreamReason)
