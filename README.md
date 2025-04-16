@@ -7,7 +7,7 @@
 You will be provided with 3 separate packages:
 1. **Styngr SDK** (`StyngrSDK.7z`)
 2. **Gem Hunter Sample** (`GemHunterSample.unitypackage`)
-3. **CSCore and FFMpeg Libraries Build** (`CSCore.7z`)
+3. **CSCore and FFMpeg Libraries** (`CSCore.7z`)
 
 The sample supports both WebGL and PC platforms.
 
@@ -31,10 +31,10 @@ The sample supports both WebGL and PC platforms.
 
 ---
 
-### **3. CSCore and FFMpeg Libraries Build**
+### **3. CSCore and FFMpeg Libraries**
 
 1. Unzip `CSCore.7z`.
-2. Copy all binaries from unziped folder to `/src/Packages/StyngrSDK/Runtime/Plugins/CSCore`.
+2. Copy all binaries from the unzipped folder to `/src/Packages/StyngrSDK/Runtime/Plugins/CSCore`.
 
 ---
 
@@ -50,7 +50,7 @@ The sample supports both WebGL and PC platforms.
 
 ### **5. Install Voltstro Studios (Unity Web Browser)**
 
-**Note:** If this is already installed, ignore this step.
+**Note:** A required scoped registry should be automatically set up from the manifest file. If not, follow the steps in this chapter.
 
 1. In the Unity Editor, open **Project Settings**.
 2. Go to the **Package Manager** section and add a new **Scoped Registry** with the following details:

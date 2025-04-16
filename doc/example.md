@@ -108,4 +108,8 @@ For each **playlist** ads can be configured:
   - Number of tracks before ad break
   - Number of ads during ad break
   
-Also, The backend provides the ability to forbid the playback of the ad to a certain age group.
+The backend supports restricting ad playback based on user age. To forbid the ad for a specific user:
+ - The user must have an age value defined in the database.
+ - An appropriate age restriction for the ad must be configured in the CMS.
+
+To enable the ad functionality and for other configuration details, contact **Styngr**  support.
