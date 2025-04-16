@@ -114,7 +114,6 @@
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\JWT_Token.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Handlers\Event\InternalDataStorage\NFTInternalStorage.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\PopUp_AssignProductAnEvents.cs" />
-    <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Statistics\RoyaltyPlaybackStatistic.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Utility\EventComparer.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Plug_Sceleton.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Header_BackButton.cs" />
@@ -130,6 +129,7 @@
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\HelperClasses\RadioPlayback.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\NFTs\Screen_NFTs.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\StoreManager.cs" />
+    <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Statistics\LicensedAdPlaybackStatistic.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Utility\UnityExtensionsUtils.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Tile_EventMy.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\UI\PixelsPerUnitMultiplierFitter.cs" />
@@ -146,6 +146,7 @@
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Screen_Styngs.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\ScriptableObjects\PackageVersionScriptableObject.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Strategies\IRadioContentStrategy.cs" />
+    <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Statistics\LicensedPlaybackStatistic.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Strategies\GroupSessionContentStrategy.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Handlers\Event\InternalDataStorage\IStorage.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Utility\Enums\WebSocketCloseStatus.cs" />

@@ -1,4 +1,5 @@
-﻿using Styngr.Enums;
+﻿using Newtonsoft.Json;
+using Styngr.Enums;
 using Styngr.Interfaces;
 using Styngr.Model.Radio;
 using System;
@@ -8,7 +9,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics
     /// <summary>
     /// Royalty playback statistic class.
     /// </summary>
-    public class RoyaltyPlaybackStatistic : PlaybackStatisticBase
+    public class LicensedAdPlaybackStatistic : PlaybackStatisticBase
     {
         /// <summary>
         /// The current track.
@@ -40,10 +41,13 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics
         /// </summary>
         public bool Mute { get; set; }
 
+        [JsonIgnore]
+        private EndAdStreamReason endAdStreamReason { get; set; }
+
         /// <summary>
         /// The reason of the end of the stream.
         /// </summary>
-        public EndStreamReason EndStreamReason => endStreamReason;
+        public EndAdStreamReason EndStreamReason => endAdStreamReason;
 
         /// <summary>
         /// The state of the app.
@@ -56,7 +60,12 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics
         public AppStateStart AppStateStart { get; set; }
 
         /// <summary>
-        /// Creates an instance of the <see cref="RoyaltyPlaybackStatistic"/> class.
+        /// The ID of ad
+        /// </summary>
+        public Guid AdId { get; set; }
+
+        /// <summary>
+        /// Creates an instance of the <see cref="LicensedAdPlaybackStatistic"/> class.
         /// </summary>
         /// <param name="currentTrack">The current track.</param>
         /// <param name="playlist">The current playlist.</param>
@@ -68,7 +77,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics
         /// <param name="endStreamReason">The reason of the end of the stream.</param>
         /// <param name="appState">The state of the app.</param>
         /// <param name="appStateStart">The state of the app at the begining of playback.</param>
-        public RoyaltyPlaybackStatistic(
+        public LicensedAdPlaybackStatistic(
             IId currentTrack,
             IId playlist,
             DateTime currentTrackStartTime,
@@ -76,9 +85,10 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics
             UseType useType,
             bool autoplay,
             bool mute,
-            EndStreamReason endStreamReason,
+            EndAdStreamReason endStreamReason,
             AppState appState,
-            AppStateStart appStateStart)
+            AppStateStart appStateStart,
+            Guid adId)
         {
             CurrentTrack = currentTrack;
             Playlist = playlist;
@@ -87,9 +97,10 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics
             UseType = useType;
             Autoplay = autoplay;
             Mute = mute;
-            this.endStreamReason = endStreamReason;
+            endAdStreamReason = endStreamReason;
             AppState = appState;
             AppStateStart = appStateStart;
+            AdId = adId;
         }
     }
 }

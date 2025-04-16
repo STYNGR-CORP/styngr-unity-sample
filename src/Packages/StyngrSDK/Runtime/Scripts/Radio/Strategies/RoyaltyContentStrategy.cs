@@ -4,6 +4,7 @@ using Styngr.Exceptions;
 using Styngr.Model.Radio;
 using System;
 using System.Collections;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using static Packages.StyngrSDK.Runtime.Scripts.Radio.JWT_Token;
 
@@ -23,21 +24,43 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies
         /// <inheritdoc/>
         public IEnumerator Next(Action<TrackInfoBase> onSuccess, Action<ErrorInfo> onFail, StreamType streamType, PlaybackStatisticBase playbackStatisticData)
         {
-            var royaltyStatisticData = playbackStatisticData as RoyaltyPlaybackStatistic;
+            if (playbackStatisticData is LicensedPlaybackStatistic)
+            {
+                var licensedStatisticData = playbackStatisticData as LicensedPlaybackStatistic;
 
-            yield return SendStatisticData(playbackStatisticData, onFail);
+                yield return SendStatisticData(licensedStatisticData, onFail);
 
-            yield return Styngr.StyngrSDK.GetTrack(Token, royaltyStatisticData.Playlist.GetId().ToString(), onSuccess, onFail, streamType: streamType);
+                yield return Styngr.StyngrSDK.GetTrack(Token, licensedStatisticData.Playlist.GetId().ToString(), onSuccess, onFail, streamType: streamType);
+            }
+            else
+            {
+                var licensedAdStatisticData = playbackStatisticData as LicensedAdPlaybackStatistic;
+
+                yield return SendStatisticData(licensedAdStatisticData, onFail);
+
+                yield return Styngr.StyngrSDK.GetTrack(Token, licensedAdStatisticData.Playlist.GetId().ToString(), onSuccess, onFail, streamType: streamType);
+            }
         }
 
         /// <inheritdoc/>
         public IEnumerator Skip(Action<TrackInfoBase> onSuccess, Action<ErrorInfo> onFail, StreamType streamType, PlaybackStatisticBase playbackStatisticData)
         {
-            var royaltyStatisticData = playbackStatisticData as RoyaltyPlaybackStatistic;
+            if (playbackStatisticData is LicensedPlaybackStatistic)
+            {
+                var licensedStatisticData = playbackStatisticData as LicensedPlaybackStatistic;
 
-            yield return SendStatisticData(playbackStatisticData, onFail);
+                yield return SendStatisticData(licensedStatisticData, onFail);
 
-            yield return Styngr.StyngrSDK.GetSkip(Token, royaltyStatisticData.Playlist.GetId().ToString(), onSuccess, onFail, streamType);
+                yield return Styngr.StyngrSDK.GetSkip(Token, licensedStatisticData.Playlist.GetId().ToString(), onSuccess, onFail, streamType);
+            }
+            else
+            {
+                var licensedAdStatisticData = playbackStatisticData as LicensedAdPlaybackStatistic;
+
+                yield return SendStatisticData(licensedAdStatisticData, onFail);
+
+                yield return Styngr.StyngrSDK.GetSkip(Token, licensedAdStatisticData.Playlist.GetId().ToString(), onSuccess, onFail, streamType);
+            }
         }
 
         /// <summary>
@@ -54,24 +77,49 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies
 
         private IEnumerator SendStatisticData(PlaybackStatisticBase playbackStatisticData, Action<ErrorInfo> onFail, Action onSuccess = null)
         {
-            var royaltyStatisticData = playbackStatisticData as RoyaltyPlaybackStatistic;
+            if (playbackStatisticData is LicensedPlaybackStatistic)
+            {
+                var licensedStatisticData = playbackStatisticData as LicensedPlaybackStatistic;
 
-            Action successAction = onSuccess ?? (() => Debug.Log($"[{nameof(RoyaltyContentStrategy)}]: Statistics sent successfully."));
+                Action successAction = onSuccess ?? (() => Debug.Log($"[{nameof(RoyaltyContentStrategy)}]: Statistics sent successfully."));
 
-            yield return Styngr.StyngrSDK.SendPlaybackStatistic(Token,
-                royaltyStatisticData.CurrentTrack,
-                royaltyStatisticData.Playlist,
-                royaltyStatisticData.CurrentTrackStartTime,
-                royaltyStatisticData.Duration,
-                royaltyStatisticData.UseType,
-                royaltyStatisticData.Autoplay,
-                royaltyStatisticData.Mute,
-                royaltyStatisticData.EndStreamReason,
-                royaltyStatisticData.AppState,
-                royaltyStatisticData.AppStateStart,
-                PlaybackType.Radio,
-                successAction,
-                onFail);
+                yield return Styngr.StyngrSDK.SendPlaybackStatistic(Token,
+                    licensedStatisticData.CurrentTrack,
+                    licensedStatisticData.Playlist,
+                    licensedStatisticData.CurrentTrackStartTime,
+                    licensedStatisticData.Duration,
+                    licensedStatisticData.UseType,
+                    licensedStatisticData.Autoplay,
+                    licensedStatisticData.Mute,
+                    licensedStatisticData.EndStreamReason,
+                    licensedStatisticData.AppState,
+                    licensedStatisticData.AppStateStart,
+                    PlaybackType.Radio,
+                    successAction,
+                    onFail);
+            }
+            else
+            {
+                var licensedAdStatisticData = playbackStatisticData as LicensedAdPlaybackStatistic;
+
+                Action successAction = onSuccess ?? (() => Debug.Log($"[{nameof(RoyaltyContentStrategy)}]: Statistics sent successfully."));
+
+                yield return Styngr.StyngrSDK.SendPlaybackStatistic(Token,
+                    licensedAdStatisticData.CurrentTrack,
+                    licensedAdStatisticData.Playlist,
+                    licensedAdStatisticData.CurrentTrackStartTime,
+                    licensedAdStatisticData.Duration,
+                    licensedAdStatisticData.UseType,
+                    licensedAdStatisticData.Autoplay,
+                    licensedAdStatisticData.Mute,
+                    licensedAdStatisticData.EndStreamReason,
+                    licensedAdStatisticData.AppState,
+                    licensedAdStatisticData.AppStateStart,
+                    PlaybackType.Radio,
+                    licensedAdStatisticData.AdId,
+                    successAction,
+                    onFail);
+            }
         }
     }
 }

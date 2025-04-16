@@ -659,17 +659,35 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
             if (RadioType == MusicType.LICENSED)
             {
-                return new RoyaltyPlaybackStatistic(
-                    currentTrack,
-                    playlists.First(),
-                    currentTrackStartTime,
-                    activeTrack.duration,
-                    UseType.streaming,
-                    autoplay: true,
-                    mute: false,
-                    endStreamReason,
-                    appState,
-                    (AppStateStart)appState);
+                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
+                {
+                    return new LicensedPlaybackStatistic(
+                        currentTrack,
+                        playlists.First(),
+                        currentTrackStartTime,
+                        activeTrack.duration,
+                        UseType.streaming,
+                        autoplay: true,
+                        mute: false,
+                        endStreamReason,
+                        appState,
+                        (AppStateStart)appState);
+                }
+                else
+                {
+                    return new LicensedAdPlaybackStatistic(
+                        currentTrack,
+                        playlists.First(),
+                        currentTrackStartTime,
+                        activeTrack.duration,
+                        UseType.ad,
+                        autoplay: true,
+                        mute: false,
+                        EndAdStreamReason.EndOfSession,
+                        appState,
+                        (AppStateStart)appState,
+                        (Guid)(currentTrack as TrackInfo).AdId);
+                }
             }
             else
             {

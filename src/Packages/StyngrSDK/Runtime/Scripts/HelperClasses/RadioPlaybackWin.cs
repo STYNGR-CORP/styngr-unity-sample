@@ -367,17 +367,35 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
             if (RadioType == MusicType.LICENSED)
             {
-                return new RoyaltyPlaybackStatistic(
-                    currentTrack,
-                    playlists.First(),
-                    currentTrackStartTime,
-                    GetTrackProgressSeconds(),
-                    IsCommercialInProgress ? UseType.ad : UseType.streaming,
-                    autoplay: true,
-                    mute,
-                    endStreamReason,
-                    appState,
-                    (AppStateStart)appState);
+                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
+                {
+                    return new LicensedPlaybackStatistic(
+                        currentTrack,
+                        playlists.First(),
+                        currentTrackStartTime,
+                        GetTrackProgressSeconds(),
+                        IsCommercialInProgress ? UseType.ad : UseType.streaming,
+                        autoplay: true,
+                        mute,
+                        endStreamReason,
+                        appState,
+                        (AppStateStart)appState);
+                }
+                else
+                {
+                    return new LicensedAdPlaybackStatistic(
+                        currentTrack,
+                        playlists.First(),
+                        currentTrackStartTime,
+                        GetTrackProgressSeconds(),
+                        IsCommercialInProgress ? UseType.ad : UseType.streaming,
+                        autoplay: true,
+                        mute,
+                        EndAdStreamReason.EndOfSession,
+                        appState,
+                        (AppStateStart)appState,
+                        (Guid)(currentTrack as TrackInfo).AdId);
+                }
             }
             else
             {
@@ -401,7 +419,6 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
                         (currentTrack as RoyaltyFreeTrackInfo).AdId);
                 }
             }
-
         }
 
         private float TrackLengthSeconds()

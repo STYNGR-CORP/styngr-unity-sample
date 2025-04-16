@@ -254,7 +254,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
             if (RadioType == MusicType.LICENSED)
             {
-                statisticData = new RoyaltyPlaybackStatistic(
+                statisticData = new LicensedPlaybackStatistic(
                     currentTrack,
                     playlists.FirstOrDefault(),
                     currentTrackStartTime,
