@@ -5,13 +5,10 @@ This project demonstrates the integration of the STYNGR SDK within the Gem Hunte
 ## Overview
 This example leverages the Gem Hunter sample game to illustrate the ease and effectiveness of integrating STYNGR’s licensed music solution, enhancing gameplay experience with professionally curated music tracks.
 
-
 ## Features
-Music Streaming Integration: Seamlessly integrate licensed music tracks into Unity-based games.
-
-Interactive Controls: In-game playback control examples, including play, pause, and skip functions.
-
-Event Management: Illustrations of how to manage music playback events and user interactions.
+- Music Streaming Integration: Seamlessly integrate licensed music tracks into Unity-based games.
+- Interactive Controls: In-game playback control examples, including play, pause, and skip functions.
+- Event Management: Illustrations of how to manage music playback events and user interactions.
 
 ## **Installation and Setup**
 
@@ -126,6 +123,6 @@ To use the SDK:
 
 ## Usage
 - Explore the integrated music features within Gem Hunter, including:
-- Background music streaming
-- Interactive playback controls
-- Music event responses
+  - Background music streaming
+  - Interactive playback controls
+  - Music event responses
