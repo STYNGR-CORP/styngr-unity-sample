@@ -1,8 +1,24 @@
+
+# STYNGR Unity SDK - Gem Hunter Sample Project
+This project demonstrates the integration of the STYNGR SDK within the Gem Hunter Unity sample game, showcasing how developers can embed licensed music streaming directly into their Unity projects.
+
+## Overview
+This example leverages the Gem Hunter sample game to illustrate the ease and effectiveness of integrating STYNGR’s licensed music solution, enhancing gameplay experience with professionally curated music tracks.
+
+
+## Features
+Music Streaming Integration: Seamlessly integrate licensed music tracks into Unity-based games.
+
+Interactive Controls: In-game playback control examples, including play, pause, and skip functions.
+
+Event Management: Illustrations of how to manage music playback events and user interactions.
+
 ## **Installation and Setup**
 
 ### **Requirements**
-- **Unity:** Version 2022.3.55f1 or later  
-- **Supported Platforms:** WebGL and PC builds  
+- **Unity:** Version 2022.3.55f1 or later 
+
+**Supported Platforms:** WebGL and PC builds  
 
 You will be provided with 3 separate packages:
 1. **Styngr SDK** (`StyngrSDK.7z`)
@@ -107,3 +123,9 @@ To use the SDK:
 3. Locate the file:  
    `src\Packages\StyngrSDK\Runtime\tokenConfiguration.json`
 4. Populate the configuration parameters provided by Styngr.
+
+## Usage
+- Explore the integrated music features within Gem Hunter, including:
+- Background music streaming
+- Interactive playback controls
+- Music event responses
