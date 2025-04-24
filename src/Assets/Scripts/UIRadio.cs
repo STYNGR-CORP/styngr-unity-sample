@@ -91,6 +91,8 @@ namespace Assets.Scripts
         [SerializeField] private GameObject radioTypeSelector;
 
 #if (UNITY_WEBGL)
+        private GameObject bridge;
+
         public RadioPlayback RadioPlayback => radioPlayback;
 #endif
 
@@ -215,25 +217,6 @@ namespace Assets.Scripts
                 volumeSlider.value = volumeValueBeforeMute;
             }
         }
-
-        public void OnDestroy()
-        {
-            if (sendStatisticsOnDestroy && radioPlayback != null && radioPlayback.GetPlaybackState().Equals(PlaybackState.Playing))
-            {
-                radioPlayback.StopRadio(EndStreamReason.ApplicationClosed, true);
-            }
-
-            StopAllCoroutines();
-#if (UNITY_STANDALONE_WIN || UNITY_EDITOR)
-            if (webBrowserClient != null && !webBrowserClient.HasDisposed)
-            {
-                webBrowserClient.Dispose();
-            }
-#endif
-        }
-
-        public void OnDisable() =>
-            StopAllCoroutines();
 
         /// <summary>
         /// Initializes the radio as royalty type.
@@ -433,36 +416,6 @@ namespace Assets.Scripts
             spotifyLikeButton.interactable = value;
         }
 
-        private void Start()
-        {
-            if (subscriptionManager != null)
-            {
-                subscriptionManager.CheckSubscriptionAndSetActivity();
-            }
-
-            if (mainMenuToggle != null)
-            {
-                mainMenuToggle.GetComponent<CanvasRenderer>().SetAlpha(1);
-            }
-
-            radioTypeSelector.SetActive(false);
-
-            var selectedPlaylist = Match3.GameManager.GetSelectedPlaylist();
-
-            if (selectedPlaylist == null)
-            {
-                InitLicensedRadio(true);
-            }
-            else if (selectedPlaylist.Type == MusicType.LICENSED)
-            {
-                InitLicensedRadio(selectedPlaylist);
-            }
-            else
-            {
-                InitRoyaltyFreeRadio(selectedPlaylist);
-            }
-        }
-
         private void WebBrowserClient_OnTitleChange(string title)
         {
             if (title.StartsWith("data:text/html"))
@@ -567,9 +520,86 @@ namespace Assets.Scripts
             }
         }
 
+#if UNITY_WEBGL
+        private void SetupBridge()
+        {
+            if (bridge == null)
+            {
+                bridge = new GameObject("Bridge");
+                bridge.AddComponent<JSBridge>();
+                var jsBridge = bridge.GetComponent<JSBridge>();
+                jsBridge.uiRadio = this;
+            }
+        }
+#endif
+
+        #region Unity Methods
+
+        private void Start()
+        {
+#if UNITY_WEBGL
+            SetupBridge();
+#endif
+
+            if (subscriptionManager != null)
+            {
+                subscriptionManager.CheckSubscriptionAndSetActivity();
+            }
+
+            if (mainMenuToggle != null)
+            {
+                mainMenuToggle.GetComponent<CanvasRenderer>().SetAlpha(1);
+            }
+
+            radioTypeSelector.SetActive(false);
+
+            var selectedPlaylist = Match3.GameManager.GetSelectedPlaylist();
+
+            if (selectedPlaylist == null)
+            {
+                InitLicensedRadio(true);
+            }
+            else if (selectedPlaylist.Type == MusicType.LICENSED)
+            {
+                InitLicensedRadio(selectedPlaylist);
+            }
+            else
+            {
+                InitRoyaltyFreeRadio(selectedPlaylist);
+            }
+        }
+
         private void Update()
         {
             while (asyncQueue.TryDequeue(out Action a)) { a(); }
         }
+
+        public void OnDestroy()
+        {
+            if (sendStatisticsOnDestroy && radioPlayback != null && radioPlayback.GetPlaybackState().Equals(PlaybackState.Playing))
+            {
+                radioPlayback.StopRadio(EndStreamReason.ApplicationClosed, true);
+            }
+
+            StopAllCoroutines();
+#if (UNITY_STANDALONE_WIN || UNITY_EDITOR)
+            if (webBrowserClient != null && !webBrowserClient.HasDisposed)
+            {
+                webBrowserClient.Dispose();
+            }
+#endif
+
+#if UNITY_WEBGL
+            if (bridge != null)
+            {
+                Destroy(bridge);
+            }
+#endif
+        }
+
+        public void OnDisable() =>
+            StopAllCoroutines();
+
+        #endregion Unity Methods
     }
 }

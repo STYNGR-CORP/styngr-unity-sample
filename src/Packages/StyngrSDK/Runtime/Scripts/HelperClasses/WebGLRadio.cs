@@ -60,7 +60,6 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
         private static readonly object _locker = new();
 
-        private Button store;
         private PlaybackState playbackState = PlaybackState.NotInitialized;
         private PlaybackStatisticBase statisticData;
 
@@ -79,11 +78,6 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         {
             Styngr.StyngrSDK.OnLogMessage += StyngrSDK_OnLogMessage;
             Styngr.StyngrSDK.OnErrorMessage += StyngrSDK_OnErrorMessage;
-
-            store = GameObject.Find("Store").GetComponent<Button>();
-
-            SetWebGLUIInteractable(false);
-            CreateLevel();
         }
 #endif
 
@@ -340,12 +334,10 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
                 currentTrackStartTime = DateTime.Now;
                 Play(trackInfoBase.TrackUrl, GetSourceType());
                 Resume();
-
+                
                 playbackState = PlaybackState.Playing;
                 PlaybackChanged.Invoke(this, playbackState);
                 InitRadioWithData(trackInfoBase);
-
-                store.interactable = true;
             }
         }
 
@@ -370,19 +362,19 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         {
             NextTrackProgressChanged?.Invoke(this, OperationProgress.Error);
             Debug.LogError($"[{nameof(WebGLRadio)}]: Error response received. Error code: {error.errorCode}, error message: {error.errorMessage}");
+
             switch ((ErrorCodes)error.errorCode)
             {
                 case ErrorCodes.SkipLimitReached:
-                    SetWebGLUIInteractable(true);
                     //Make sure to disable the skip button so that the statistics won't be sent multiple times.
                     SkipLimitReached.Invoke(this, EventArgs.Empty);
                     break;
 
                 case ErrorCodes.NoValidTracks:
-                    SetWebGLUIInteractable(false);
                     RadioInteractabilityChanged?.Invoke(this, false);
                     break;
             }
+
             OnErrorOccured.Invoke(this, error);
             subscriptionManager.CheckSubscriptionAndSetActivity();
         }
@@ -423,28 +415,6 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         }
 
         /// <summary>
-        /// Constructs the level.
-        /// </summary>
-        private void CreateLevel()
-        {
-            StartCoroutine(BeginLevelLoadingCoroutine());
-        }
-
-        /// <summary>
-        /// Begin level loading coroutine.
-        /// </summary>
-        /// <returns></returns>
-        private IEnumerator BeginLevelLoadingCoroutine()
-        {
-            yield return new WaitUntil(() => !string.IsNullOrEmpty(Token));
-
-            string sdkToken = Token;
-            StoreManager.Instance.LoadStore(sdkToken);
-
-            store.interactable = true;
-        }
-
-        /// <summary>
         /// Sends statisticks to the server.
         /// </summary>
         /// <param name="endStreamReason">End of the stream reason.</param>
@@ -476,11 +446,6 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
         private void StyngrSDK_OnErrorMessage(object sender, string e)
         { Debug.LogError(e); }
-
-        private void SetWebGLUIInteractable(bool value)
-        {
-            store.interactable = value;
-        }
 
         private string GetSourceType() =>
             currentStreamType.Equals(StreamType.HTTP) ? "video/mp4" : "application/x-mpegURL";
