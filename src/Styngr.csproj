@@ -80,6 +80,7 @@
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Tile_FilterType.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\UI\ScrollViewFitter.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Tile_Stynglist.cs" />
+    <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Statistics\RoyaltyFreeAdPlaybackStatistic.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Header_SearchMenu.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\HelperClasses\SubscriptionManager.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Statistics\PlaybackStatisticBase.cs" />
@@ -113,7 +114,6 @@
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\JWT_Token.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Handlers\Event\InternalDataStorage\NFTInternalStorage.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\PopUp_AssignProductAnEvents.cs" />
-    <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Statistics\RoyaltyPlaybackStatistic.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Utility\EventComparer.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Plug_Sceleton.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Header_BackButton.cs" />
@@ -129,6 +129,7 @@
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\HelperClasses\RadioPlayback.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\NFTs\Screen_NFTs.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\StoreManager.cs" />
+    <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Statistics\LicensedAdPlaybackStatistic.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Utility\UnityExtensionsUtils.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Tile_EventMy.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\UI\PixelsPerUnitMultiplierFitter.cs" />
@@ -145,6 +146,7 @@
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Screen_Styngs.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\ScriptableObjects\PackageVersionScriptableObject.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Strategies\IRadioContentStrategy.cs" />
+    <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Statistics\LicensedPlaybackStatistic.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Strategies\GroupSessionContentStrategy.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Handlers\Event\InternalDataStorage\IStorage.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Utility\Enums\WebSocketCloseStatus.cs" />
@@ -177,12 +179,12 @@
   <ItemGroup>
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\CSCore.Ffmpeg.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\avformat-57.dll" />
-    <None Include="Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\avcodec-57.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\avutil-55.dll" />
     <None Include="Packages\StyngrSDK\Styngr.asmdef" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\CSCore.dll" />
     <None Include="Packages\StyngrSDK\Runtime\Plugins\CSCore\swresample-2.dll" />
+    <None Include="Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="UnityEngine">
@@ -525,6 +527,14 @@
       <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1\Editor\Data\PlaybackEngines\WebGLSupport\UnityEditor.WebGL.Extensions.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="UnityEditor.Android.Extensions">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1\Editor\Data\PlaybackEngines\AndroidPlayer\UnityEditor.Android.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="UnityEditor.WindowsStandalone.Extensions">
       <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1\Editor\Data\PlaybackEngines\WindowsStandaloneSupport\UnityEditor.WindowsStandalone.Extensions.dll</HintPath>
       <Private>False</Private>
@@ -549,20 +559,12 @@
       <HintPath>Library\PackageCache\com.unity.collections@1.2.4\Unity.Collections.LowLevel.ILSupport\Unity.Collections.LowLevel.ILSupport.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="StyngrSDK">
-      <HintPath>Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="unityplastic">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@2.6.0\Lib\Editor\unityplastic.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Plastic.Antlr3.Runtime">
       <HintPath>Library\PackageCache\com.unity.collab-proxy@2.6.0\Lib\Editor\Unity.Plastic.Antlr3.Runtime.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="websocket-sharp">
-      <HintPath>Assets\Packages\WebSocketSharp-netstandard.1.0.1\lib\netstandard2.0\websocket-sharp.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Unity.Plastic.Newtonsoft.Json">
@@ -589,6 +591,10 @@
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.4\Runtime\VisualScripting.Flow\Dependencies\NCalc\Unity.VisualScripting.Antlr3.Runtime.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="StyngrSDK">
+      <HintPath>Packages\StyngrSDK\Lib\Runtime\StyngrSDK\StyngrSDK.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="VoltRpc">
       <HintPath>Library\PackageCache\org.nuget.voltrpc@3.1.0\netstandard2.1\VoltRpc.dll</HintPath>
       <Private>False</Private>
@@ -601,12 +607,36 @@
       <HintPath>Library\PackageCache\com.unity.visualscripting@1.9.4\Editor\VisualScripting.Core\EditorAssetResources\Unity.VisualScripting.TextureAssets.dll</HintPath>
       <Private>False</Private>
     </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>Assets\Packages\WebSocketSharp-netstandard.1.0.1\lib\netstandard2.0\websocket-sharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="NugetForUnity">
       <HintPath>Assets\NuGet\Editor\NugetForUnity.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System.Runtime.CompilerServices.Unsafe">
       <HintPath>Library\PackageCache\org.nuget.system.runtime.compilerservices.unsafe@4.5.3\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Xcode">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Xcode.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="UnityEditor.iOS.Extensions.Common">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1\Editor\Data\PlaybackEngines\iOSSupport\UnityEditor.iOS.Extensions.Common.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Android.Types">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Types.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Android.Gradle">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.Gradle.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="Unity.Android.GradleProject">
+      <HintPath>C:\Program Files\Unity\Hub\Editor\2022.3.55f1\Editor\Data\PlaybackEngines\AndroidPlayer\Unity.Android.GradleProject.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="netstandard">

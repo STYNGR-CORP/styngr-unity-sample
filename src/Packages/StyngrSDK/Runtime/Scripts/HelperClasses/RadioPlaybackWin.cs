@@ -367,27 +367,58 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
             if (RadioType == MusicType.LICENSED)
             {
-                return new RoyaltyPlaybackStatistic(
-                    currentTrack,
-                    playlists.First(),
-                    currentTrackStartTime,
-                    GetTrackProgressSeconds(),
-                    IsCommercialInProgress ? UseType.ad : UseType.streaming,
-                    autoplay: true,
-                    mute,
-                    endStreamReason,
-                    appState,
-                    (AppStateStart)appState);
+                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
+                {
+                    return new LicensedPlaybackStatistic(
+                        currentTrack,
+                        playlists.First(),
+                        currentTrackStartTime,
+                        GetTrackProgressSeconds(),
+                        UseType.streaming,
+                        autoplay: true,
+                        mute,
+                        endStreamReason,
+                        appState,
+                        (AppStateStart)appState);
+                }
+                else
+                {
+                    return new LicensedAdPlaybackStatistic(
+                        currentTrack,
+                        playlists.First(),
+                        currentTrackStartTime,
+                        GetTrackProgressSeconds(),
+                        UseType.ad,
+                        autoplay: true,
+                        mute,
+                        EndAdStreamReason.EndOfSession,
+                        appState,
+                        (AppStateStart)appState,
+                        (Guid)(currentTrack as TrackInfo).AdId);
+                }
             }
             else
             {
-                return new RoyaltyFreePlaybackStatistic(
-                    GetTrackProgressSeconds(),
-                    endStreamReason,
-                    (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
-                    playlists.FirstOrDefault());
+                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
+                {
+                    return new RoyaltyFreePlaybackStatistic(
+                        GetTrackProgressSeconds(),
+                        endStreamReason,
+                        (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
+                        playlists.FirstOrDefault());
+                }
+                else
+                {
+                    return new RoyaltyFreeAdPlaybackStatistic(
+                        new RoyaltyFreePlaybackStatistic(
+                            GetTrackProgressSeconds(),
+                            endStreamReason,
+                            (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
+                            playlists.FirstOrDefault()),
+                        UseType.ad,
+                        (currentTrack as RoyaltyFreeTrackInfo).AdId);
+                }
             }
-
         }
 
         private float TrackLengthSeconds()
@@ -618,7 +649,6 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             }
 
             OnErrorOccured?.Invoke(this, errorInfo);
-
         }
     }
 }

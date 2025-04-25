@@ -20,7 +20,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies
         /// <inheritdoc/>
         public IEnumerator Next(Action<TrackInfoBase> onSuccess, Action<ErrorInfo> onFail, StreamType streamType, PlaybackStatisticBase playbackStatisticData)
         {
-            var royaltyStatisticData = playbackStatisticData as RoyaltyPlaybackStatistic;
+            var licensedStatisticData = playbackStatisticData as LicensedPlaybackStatistic;
 
             yield return SendStatisticData(playbackStatisticData, onFail);
 
@@ -30,9 +30,9 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies
         /// <inheritdoc/>
         public IEnumerator Skip(Action<TrackInfoBase> onSuccess, Action<ErrorInfo> onFail, StreamType streamType, PlaybackStatisticBase playbackStatisticData)
         {
-            var royaltyStatisticData = playbackStatisticData as RoyaltyPlaybackStatistic;
+            var licensedStatisticData = playbackStatisticData as LicensedPlaybackStatistic;
 
-            yield return SendStatisticData(playbackStatisticData, onFail);
+            yield return SendStatisticData(licensedStatisticData, onFail);
 
             yield return Styngr.StyngrSDK.SkipGroupSessionTrack(Token, onSuccess, onFail, streamType);
         }
@@ -51,21 +51,21 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies
 
         private IEnumerator SendStatisticData(PlaybackStatisticBase statisticData, Action<ErrorInfo> onFail, Action onSuccess = null)
         {
-            var royaltyStatisticData = statisticData as RoyaltyPlaybackStatistic;
+            var licensedStatisticData = statisticData as LicensedPlaybackStatistic;
 
             Action successAction = onSuccess ?? (() => Debug.Log($"[{nameof(GroupSessionContentStrategy)}]: Statistics sent successfully."));
 
             yield return Styngr.StyngrSDK.SendPlaybackStatistic(Token,
-                royaltyStatisticData.CurrentTrack,
-                royaltyStatisticData.Playlist,
-                royaltyStatisticData.CurrentTrackStartTime,
-                royaltyStatisticData.Duration,
-                royaltyStatisticData.UseType,
-                royaltyStatisticData.Autoplay,
-                royaltyStatisticData.Mute,
-                royaltyStatisticData.EndStreamReason,
-                royaltyStatisticData.AppState,
-                royaltyStatisticData.AppStateStart,
+                licensedStatisticData.CurrentTrack,
+                licensedStatisticData.Playlist,
+                licensedStatisticData.CurrentTrackStartTime,
+                licensedStatisticData.Duration,
+                licensedStatisticData.UseType,
+                licensedStatisticData.Autoplay,
+                licensedStatisticData.Mute,
+                licensedStatisticData.EndStreamReason,
+                licensedStatisticData.AppState,
+                licensedStatisticData.AppStateStart,
                 PlaybackType.GroupSession,
                 successAction,
                 onFail);

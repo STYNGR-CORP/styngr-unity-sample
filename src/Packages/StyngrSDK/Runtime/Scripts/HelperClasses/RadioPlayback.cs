@@ -9,6 +9,7 @@ using Styngr;
 using Styngr.DTO.Response.SubscriptionsAndBundles;
 using Styngr.Enums;
 using Styngr.Exceptions;
+using Styngr.Interfaces;
 using Styngr.Model.Radio;
 using System;
 using System.Collections;
@@ -17,6 +18,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.Windows;
 using static Packages.StyngrSDK.Runtime.Scripts.Radio.JWT_Token;
 
 namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
@@ -682,25 +684,57 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
             if (RadioType == MusicType.LICENSED)
             {
-                return new RoyaltyPlaybackStatistic(
-                    currentTrack,
-                    playlists.First(),
-                    currentTrackStartTime,
-                    activeTrack.duration,
-                    UseType.streaming,
-                    autoplay: true,
-                    mute: false,
-                    endStreamReason,
-                    appState,
-                    (AppStateStart)appState);
+                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
+                {
+                    return new LicensedPlaybackStatistic(
+                        currentTrack,
+                        playlists.First(),
+                        currentTrackStartTime,
+                        activeTrack.duration,
+                        UseType.streaming,
+                        autoplay: true,
+                        mute: false,
+                        endStreamReason,
+                        appState,
+                        (AppStateStart)appState);
+                }
+                else
+                {
+                    return new LicensedAdPlaybackStatistic(
+                        currentTrack,
+                        playlists.First(),
+                        currentTrackStartTime,
+                        activeTrack.duration,
+                        UseType.ad,
+                        autoplay: true,
+                        mute: false,
+                        EndAdStreamReason.EndOfSession,
+                        appState,
+                        (AppStateStart)appState,
+                        (Guid)(currentTrack as TrackInfo).AdId);
+                }
             }
             else
             {
-                return new RoyaltyFreePlaybackStatistic(
-                    GetTrackProgressSeconds(),
-                    endStreamReason,
-                    (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
-                    playlists.FirstOrDefault());
+                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
+                {
+                    return new RoyaltyFreePlaybackStatistic(
+                        GetTrackProgressSeconds(),
+                        endStreamReason,
+                        (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
+                        playlists.FirstOrDefault());
+                }
+                else
+                {
+                    return new RoyaltyFreeAdPlaybackStatistic(
+                        new RoyaltyFreePlaybackStatistic(
+                            GetTrackProgressSeconds(),
+                            endStreamReason,
+                            (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
+                            playlists.FirstOrDefault()),
+                        UseType.ad,
+                        (currentTrack as RoyaltyFreeTrackInfo).AdId);
+                }
             }
         }
 
