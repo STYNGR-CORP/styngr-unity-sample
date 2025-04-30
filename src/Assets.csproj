@@ -86,6 +86,7 @@
     <Compile Include="Assets\GemHunterMatch\Scripts\SceneName.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\VFXPoolSystem.cs" />
     <Compile Include="Assets\Scripts\GroupSession\GroupSessionUserTile.cs" />
+    <Compile Include="Assets\Scripts\PlaylistUtils\GUIPlaylistsSelector.cs" />
     <Compile Include="Assets\WebGLSupport\WebGLInput\Wrapper\WrappedTMPInputField.cs" />
     <Compile Include="Assets\Scripts\GroupSession\GroupSessionTile.cs" />
     <Compile Include="Assets\Scripts\GroupSession\GroupSessionUsersSelector.cs" />
@@ -108,10 +109,12 @@
     <Compile Include="Assets\Scripts\Layouting\AdvancedGridLayoutGroup.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\BonusItem\BonusGemBonusItem.cs" />
     <Compile Include="Assets\Scripts\HideShowGameObjects.cs" />
+    <Compile Include="Assets\Scripts\PlaylistUtils\PlaylistEntryController.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\BonusGem\SmallBomb.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\Authoring\GemPlacerTile.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\TieBlocker.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\ShopItem\ShopItemCoin.cs" />
+    <Compile Include="Assets\Scripts\PlaylistUtils\UIToolkitPlaylistsSelector.cs" />
     <Compile Include="Assets\Scripts\SubscriptionsAndBundles\BundlesAndSubscriptionsController.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\LevelData.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\BonusItem\BonusItem.cs" />
@@ -160,6 +163,7 @@
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Leading Characters.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Properties.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro_Surface.cginc" />
+    <None Include="Assets\UI\UI Toolkit\PlaylistEntry.uss" />
     <None Include="Assets\Assets.asmdef" />
     <None Include="Assets\TextMesh Pro\Resources\LineBreaking Following Characters.txt" />
     <None Include="Assets\GemHunterMatch\UI\MainUI.uss" />
@@ -167,6 +171,8 @@
     <None Include="Assets\GemHunterMatch\UI\MainUI.uxml" />
     <None Include="Assets\GemHunterMatch\UI\Shop.uxml" />
     <None Include="Assets\GemHunterMatch\UI\UI Toolkit\SelectPlaylist.uxml" />
+    <None Include="Assets\UI\UI Toolkit\PlaylistEntry.uxml" />
+    <None Include="Assets\UI\UI Toolkit\PlaylistsSelectorView.uss" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Masking.shader" />
     <None Include="Assets\NuGet\Editor\NugetForUnity.dll" />
     <None Include="Assets\GemHunterMatch\UI\LoadingScreen.uxml" />
@@ -174,6 +180,7 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Bitmap-Mobile.shader" />
     <None Include="Assets\TextMesh Pro\Fonts\LiberationSans - OFL.txt" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile.shader" />
+    <None Include="Assets\UI\UI Toolkit\PlaylistsSelectorView.uxml" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_Sprite.shader" />
   </ItemGroup>
   <ItemGroup>

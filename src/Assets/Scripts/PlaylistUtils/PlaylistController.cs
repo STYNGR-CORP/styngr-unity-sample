@@ -263,7 +263,15 @@ namespace Assets.Scripts.PlaylistUtils
             if (playlistsSelector != null)
             {
                 ClearPlaylistSelectorEvents();
-                playlistsSelector.transform.parent.gameObject.SetActive(false);
+
+                if (playlistsSelector is GUIPlaylistsSelector)
+                {
+                    playlistsSelector.transform.parent.gameObject.SetActive(false);
+                }
+                else if (playlistsSelector is UIToolkitPlaylistsSelector)
+                {
+                    playlistsSelector.gameObject.SetActive(false);
+                }
             }
         }
 
