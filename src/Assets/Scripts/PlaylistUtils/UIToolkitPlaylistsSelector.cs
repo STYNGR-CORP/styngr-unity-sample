@@ -69,6 +69,7 @@ public class UIToolkitPlaylistsSelector : PlaylistsSelector
     {
         subscriptionManager = FindObjectOfType<SubscriptionManager>();
     }
+
     private void OnDisable()
     {
         playlistView.selectionChanged -= OnPlaylistSelected;
