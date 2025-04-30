@@ -30,6 +30,8 @@ namespace Assets.Scripts.PlaylistUtils
 
         protected abstract void ConstructSelectPlaylistObject(List<Playlist> playlists, Playlist currentlyActivePlaylist);
 
+        protected abstract void OnPlaylistSelected(object sender, Playlist playlistInfo);
+
         /// <summary>
         /// Creates a selector.
         /// </summary>
@@ -77,42 +79,6 @@ namespace Assets.Scripts.PlaylistUtils
         {
             activePlaylistId = null;
             playlistSelectionCanceled?.Invoke(this, EventArgs.Empty);
-        }
-
-        protected void OnPlaylistSelected(object sender, Playlist playlistInfo)
-        {
-            void OnSuccess(ActiveSubscription subscription)
-            {
-                playlistSelected?.Invoke(this, playlistInfo);
-                gameObject.SetActive(false);
-            }
-
-            void onFail(ErrorInfo error)
-            {
-                if (subscriptionHelper.IsPlaylistPremium(playlistInfo))
-                {
-                    if (SubscriptionHelper.Instance.IsSubscriptionExpired(error.errorCode))
-                    {
-                        InfoDialog.Instance.ShowErrorMessage("No Active Subscription", $"{error.errorMessage}.{Environment.NewLine}Please purchase a subscription or choose another playlist.");
-                        return;
-                    }
-                }
-                else
-                {
-                    playlistSelected?.Invoke(this, playlistInfo);
-                    gameObject.SetActive(false);
-                }
-                Debug.LogError(error.Errors);
-            }
-
-            if (subscriptionManager != null)
-            {
-                subscriptionManager.GetActiveUserSubscription(OnSuccess, onFail);
-            }
-            else
-            {
-                OnSuccess(default);
-            }
         }
 
         protected void SetCurrentlyActivePlaylistId(Playlist currentlyActivePlaylist)

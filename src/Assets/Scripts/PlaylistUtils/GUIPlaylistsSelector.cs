@@ -1,6 +1,9 @@
 ﻿using Assets.Scripts.SubscriptionsAndBundles;
 using Assets.Utils.Enums;
+using Assets.Utils.HelperClasses;
 using Packages.StyngrSDK.Runtime.Scripts.HelperClasses;
+using Styngr.DTO.Response.SubscriptionsAndBundles;
+using Styngr.Exceptions;
 using Styngr.Model.Radio;
 using System;
 using System.Collections.Generic;
@@ -46,6 +49,42 @@ namespace Assets.Scripts.PlaylistUtils
             else
             {
                 CreateSelector(playlists, currentlyActivePlaylist);
+            }
+        }
+
+        protected override void OnPlaylistSelected(object sender, Playlist playlistInfo)
+        {
+            void OnSuccess(ActiveSubscription subscription)
+            {
+                playlistSelected?.Invoke(this, playlistInfo);
+                gameObject.transform.parent.gameObject.SetActive(false);
+            }
+
+            void onFail(ErrorInfo error)
+            {
+                if (subscriptionHelper.IsPlaylistPremium(playlistInfo))
+                {
+                    if (SubscriptionHelper.Instance.IsSubscriptionExpired(error.errorCode))
+                    {
+                        InfoDialog.Instance.ShowErrorMessage("No Active Subscription", $"{error.errorMessage}.{Environment.NewLine}Please purchase a subscription or choose another playlist.");
+                        return;
+                    }
+                }
+                else
+                {
+                    playlistSelected?.Invoke(this, playlistInfo);
+                    gameObject.transform.parent.gameObject.SetActive(false);
+                }
+                Debug.LogError(error.Errors);
+            }
+
+            if (subscriptionManager != null)
+            {
+                subscriptionManager.GetActiveUserSubscription(OnSuccess, onFail);
+            }
+            else
+            {
+                OnSuccess(default);
             }
         }
 
