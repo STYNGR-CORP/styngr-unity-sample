@@ -13,7 +13,7 @@ public class PlaylistEntryController
 
 
     // This function retrieves a reference to the 
-    // character name label inside the UI element.
+    // Playlist name label inside the UI element.
     public void SetVisualElement(VisualElement visualElement)
     {
         playlistNameLabel = visualElement.Q<Label>("playlist-name");
