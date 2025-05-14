@@ -11,7 +11,6 @@ public class PlaylistEntryController
     /// </summary>
     public Playlist Playlist => playlistInfo;
 
-
     // This function retrieves a reference to the 
     // Playlist name label inside the UI element.
     public void SetVisualElement(VisualElement visualElement)

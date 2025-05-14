@@ -66,10 +66,9 @@ namespace Assets.Scripts.PlaylistUtils
         /// </summary>
         /// <param name="playlists">Playlists that are available for selection.</param>
         /// <param name="currentlyActivePlaylist">Currently active playlist that is being played.</param>
-        /// <param name="withoutSubscribeButton">Indication if the playlist selector should be built with or without subscribe button.</param>
-        public virtual void CreateSelector(PlaylistsInfo playlists, Playlist currentlyActivePlaylist, bool withoutSubscribeButton)
+        public virtual void CreateSelectorWithoutSubscribeButton(PlaylistsInfo playlists, Playlist currentlyActivePlaylist)
         {
-            CreateSelector(playlists, currentlyActivePlaylist, false);
+            CreateSelector(playlists, currentlyActivePlaylist);
         }
 
         /// <summary>

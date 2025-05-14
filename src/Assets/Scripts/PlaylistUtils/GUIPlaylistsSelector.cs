@@ -36,20 +36,13 @@ namespace Assets.Scripts.PlaylistUtils
         /// </summary>
         /// <param name="playlists">Playlists that are available for selection.</param>
         /// <param name="currentlyActivePlaylist">Currently active playlist that is being played.</param>
-        /// <param name="withoutSubscribeButton">Indication if the playlist selector should be built with or without subscribe button.</param>
-        public override void CreateSelector(PlaylistsInfo playlists, Playlist currentlyActivePlaylist, bool withoutSubscribeButton)
+        public override void CreateSelectorWithoutSubscribeButton(PlaylistsInfo playlists, Playlist currentlyActivePlaylist)
         {
             SetCurrentlyActivePlaylistId(currentlyActivePlaylist);
-
-            if (withoutSubscribeButton)
-            {
-                subscribeButton.gameObject.SetActive(false);
-                subscriptionManager.UpdateSubscriptionInfo(() => ConstructSelectPlaylistObject(playlists.Playlists, currentlyActivePlaylist));
-            }
-            else
-            {
-                CreateSelector(playlists, currentlyActivePlaylist);
-            }
+            
+            subscribeButton.gameObject.SetActive(false);
+            subscriptionManager.UpdateSubscriptionInfo(() => ConstructSelectPlaylistObject(playlists.Playlists, currentlyActivePlaylist));
+         
         }
 
         protected override void OnPlaylistSelected(object sender, Playlist playlistInfo)
@@ -95,7 +88,7 @@ namespace Assets.Scripts.PlaylistUtils
                 var playlistTile = Instantiate(playlistTemplate, playlistTemplate.transform.parent);
 
                 // Create the tile with indication that the playlist is currently playing. The tile is not iteractable.
-                if (currentlyActivePlaylist is not null && currentlyActivePlaylist.GetId().Equals(playlist.GetId()))
+                if (currentlyActivePlaylist != null && currentlyActivePlaylist.GetId().Equals(playlist.GetId()))
                 {
                     playlistTile.ConstructDisabledTileWithReasonMessage(playlist, TileDisabledReason.CurrentlyPlaying);
                 }

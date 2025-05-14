@@ -172,7 +172,7 @@ namespace Assets.Scripts.PlaylistUtils
 
                     RegisterPlaylistSelectorEvents();
 
-                    playlistsSelector.CreateSelector(playlistInfo, currentlyActivePlaylist, withoutSubscribeButton);
+                    playlistsSelector.CreateSelectorWithoutSubscribeButton(playlistInfo, currentlyActivePlaylist);
                 }
 
                 yield return StyngrSDK.GetPlaylists(Token, PlaylistsReceived, OnFailedResponse);

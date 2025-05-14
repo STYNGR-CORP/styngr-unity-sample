@@ -13,7 +13,7 @@ using UnityEngine.UIElements;
 public class UIToolkitPlaylistsSelector : PlaylistsSelector
 {     
     /// <summary>
-    /// Template from which te each entry will be created and shown for selection.
+    /// Template from which the each entry will be created and shown for selection.
     /// </summary>
     [SerializeField] private VisualTreeAsset playlistEntryTemplate;
 
@@ -54,7 +54,6 @@ public class UIToolkitPlaylistsSelector : PlaylistsSelector
         cancelBtn = root.Q<Button>("cancel-btn");
 
         RegisterEvents();
-
     }
 
     protected override void OnPlaylistSelected(object sender, Playlist playlistInfo)
@@ -95,8 +94,14 @@ public class UIToolkitPlaylistsSelector : PlaylistsSelector
 
     private void OnPlaylistSelected(IEnumerable<object> enumerable)
     {
-        Debug.Log($"Selected playlist with Id: {(playlistView.selectedItem as Playlist).Id}");
-        OnPlaylistSelected(this, playlistView.selectedItem as Playlist);
+        if (playlistView.selectedItem is Playlist)
+        {
+            var selectedPlaylist = playlistView.selectedItem as Playlist;
+
+            Debug.Log($"UIToolkit - Selected playlist with Id: {selectedPlaylist.Id}");
+
+            OnPlaylistSelected(this, selectedPlaylist);
+        }
     }
 
     private void RegisterEvents()
