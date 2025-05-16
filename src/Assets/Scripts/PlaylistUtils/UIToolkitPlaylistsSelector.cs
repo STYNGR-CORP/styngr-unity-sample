@@ -98,7 +98,7 @@ public class UIToolkitPlaylistsSelector : PlaylistsSelector
         {
             var selectedPlaylist = playlistView.selectedItem as Playlist;
 
-            Debug.Log($"UIToolkit - Selected playlist with Id: {selectedPlaylist.Id}");
+            Debug.Log($"[{nameof(UIToolkitPlaylistsSelector)}] Selected playlist with Id: {selectedPlaylist.Id}");
 
             OnPlaylistSelected(this, selectedPlaylist);
         }
