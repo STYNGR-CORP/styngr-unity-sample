@@ -1,0 +1,6 @@
+Event	ID	Name			Wwise Object Path	Notes
+	1069431850	Player			\Default Work Unit\Player	
+
+External Source	ID	Name			Wwise Object Path	Notes
+	618371124	External_Source			\Default Work Unit\ExternalPlaceholder\External_Source	
+

@@ -2,6 +2,7 @@
 using Packages.StyngrSDK.Runtime.Scripts.HelperClasses;
 using Packages.StyngrSDK.Runtime.Scripts.Radio;
 using Packages.StyngrSDK.Runtime.Scripts.Store.Utility.Enums;
+using Packages.StyngrSDK.Runtime.Scripts.Wwise;
 using Styngr.Enums;
 using Styngr.Exceptions;
 using Styngr.Model.Radio;
@@ -14,6 +15,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Store
     [Serializable]
     public class UI_MediaPlayer : MonoBehaviour
     {
+        public WwiseStreamPlayer player;
         /// <summary>
         /// Play/Pause Switch
         /// </summary>
@@ -99,7 +101,8 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Store
 
         public void Play(string trackUrl, string trackId = null, float expectedDuration = 0)
         {
-            if (MediaPlayer.main != null && toggle.isOn)
+            Debug.Log(trackUrl);
+            /*if (MediaPlayer.main != null && toggle.isOn)
             {
                 
                 MediaPlayer.main.OnBeginPlayback += OnBeginPlayback;
@@ -114,7 +117,9 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Store
                 {
                     MediaPlayer.main.Play(trackUrl, trackId, false, expectedDuration);
                 }
-            }
+            }*/
+
+            StartCoroutine(player.SetStreamAndPlay(trackUrl));
         }
 
         public void Stop()
