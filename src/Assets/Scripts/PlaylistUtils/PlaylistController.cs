@@ -172,7 +172,7 @@ namespace Assets.Scripts.PlaylistUtils
 
                     RegisterPlaylistSelectorEvents();
 
-                    playlistsSelector.CreateSelector(playlistInfo, currentlyActivePlaylist, withoutSubscribeButton);
+                    playlistsSelector.CreateSelectorWithoutSubscribeButton(playlistInfo, currentlyActivePlaylist);
                 }
 
                 yield return StyngrSDK.GetPlaylists(Token, PlaylistsReceived, OnFailedResponse);
@@ -263,7 +263,15 @@ namespace Assets.Scripts.PlaylistUtils
             if (playlistsSelector != null)
             {
                 ClearPlaylistSelectorEvents();
-                playlistsSelector.transform.parent.gameObject.SetActive(false);
+
+                if (playlistsSelector is GUIPlaylistsSelector)
+                {
+                    playlistsSelector.transform.parent.gameObject.SetActive(false);
+                }
+                else if (playlistsSelector is UIToolkitPlaylistsSelector)
+                {
+                    playlistsSelector.gameObject.SetActive(false);
+                }
             }
         }
 

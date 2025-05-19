@@ -1,0 +1,25 @@
+#list-entry, 
+#playlist-name  {
+    height: 100%;
+    margin-top: 0.5%;   
+    margin-bottom: 0.5%;
+    border-radius: 4px;   
+    width: 100%; 
+}
+
+#list-entry {
+    border-color: rgb(49, 26, 17);
+    background-color: rgb(52, 57, 61);
+}
+
+#list-entry:hover {
+    background-color:rgba(5, 103, 159, 255);
+}
+
+#playlist-name {
+    align-items: flex-start;
+    justify-content: center;
+    color: rgb(248, 248, 248);
+    -unity-font-style: normal;
+    -unity-text-align: middle-left;
+}
