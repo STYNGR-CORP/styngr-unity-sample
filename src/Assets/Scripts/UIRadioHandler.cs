@@ -194,7 +194,7 @@ namespace Assets.Scripts
             CreateRadioScript();
 
             radioPlayback.RadioType = MusicType.LICENSED;
-            radioPlayback.SetStrategy(new RoyaltyContentStrategy());
+            radioPlayback.SetStrategy(new LicensedContentStrategy());
 
             StartCoroutine(radioPlayback.InitWithRandomPlaylist(resetSessionId));
         }
@@ -207,7 +207,7 @@ namespace Assets.Scripts
             CreateRadioScript();
 
             radioPlayback.RadioType = MusicType.LICENSED;
-            radioPlayback.SetStrategy(new RoyaltyContentStrategy());
+            radioPlayback.SetStrategy(new LicensedContentStrategy());
 
             StartCoroutine(radioPlayback.InitWithPlaylist(selectedPlaylist, PlaybackType.Radio, true));
         }

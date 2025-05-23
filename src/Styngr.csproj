@@ -9,7 +9,8 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <ProjectGuid>{FF4F85F4-FAEC-6396-D584-664B717DBDE4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -60,6 +61,7 @@
     <Analyzer Include="C:\Program Files\Unity\Hub\Editor\2022.3.55f1\Editor\Data\Tools\Unity.SourceGenerators\Unity.Properties.SourceGenerator.dll" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Packages\StyngrSDK\Runtime\Scripts\HelperClasses\PlaylistController.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\PopUp.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\PopUp_Filters.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Screen_Shading.cs" />
@@ -136,7 +138,7 @@
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Utility\Enums\StoreInstanceState.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Screen_SwitchBaseTypeView.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\Utility\Enums\RotationDirection.cs" />
-    <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Strategies\RoyaltyContentStrategy.cs" />
+    <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Radio\Strategies\LicensedContentStrategy.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\UI\WaitCircle.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\HelperClasses\JSONConfigurationClasses.cs" />
     <Compile Include="Packages\StyngrSDK\Runtime\Scripts\Store\UI_BackgroundImage.cs" />

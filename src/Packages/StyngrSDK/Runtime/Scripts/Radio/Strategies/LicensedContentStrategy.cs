@@ -1,20 +1,19 @@
 ﻿using Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics;
-using Styngr.DTO.Request;
 using Styngr.Enums;
 using Styngr.Exceptions;
-using Styngr.Model.Radio;
 using StyngrSDK.Model.Radio;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using UnityEngine;
 using static Packages.StyngrSDK.Runtime.Scripts.Radio.JWT_Token;
 
 namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies
 {
     /// <summary>
-    /// Represents the strategy for royalty-free radio actions
+    /// Represents the strategy for royalty radio actions
     /// </summary>
-    public class RoyaltyFreeContentStrategy : IRadioContentStrategy
+    public class LicensedContentStrategy : IRadioContentStrategy
     {
         /// <inheritdoc/>
         public IEnumerator Next(Guid playlistId, TrackType trackType, PlaybackStatistics statistics, List<(Type expectedType, Delegate handler)> onSuccessHandlers, Action<ErrorInfo> onFail, FormatType formatType = FormatType.AAC, StreamType streamType = StreamType.HTTP)
@@ -25,7 +24,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies
         /// <inheritdoc/>
         public IEnumerator StartPlaylist(Guid playlistId, List<(Type, Delegate)> onSuccessHandlers, Action<ErrorInfo> onFail, FormatType formatType = FormatType.AAC, StreamType streamType = StreamType.HTTP)
         {
-            yield return Styngr.StyngrSDK.StartPlaylistSession(Token, playlistId.ToString(), RadioPlaylistType.ROYALTY_FREE, onSuccessHandlers, onFail, formatType, streamType);
+            yield return Styngr.StyngrSDK.StartPlaylistSession(Token, playlistId.ToString(), RadioPlaylistType.LICENSED, onSuccessHandlers, onFail, formatType, streamType);
         }
 
         /// <inheritdoc/>
