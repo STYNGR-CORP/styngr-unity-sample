@@ -313,6 +313,8 @@ namespace Assets.Scripts
                 radioPlayback.InitSubscriptionComponents(subscriptionManager, subscribeButton, RadioSubscribeName);
             }
 
+            DontDestroyOnLoad(radioGameObject);
+
             RegisterEvents();
             SetRadioUIInteractableImmediate(false);
         }
@@ -595,6 +597,8 @@ namespace Assets.Scripts
                 Destroy(bridge);
             }
 #endif
+
+            Destroy(radioGameObject);
         }
 
         public void OnDisable() =>
