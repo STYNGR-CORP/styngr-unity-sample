@@ -313,7 +313,7 @@ namespace Assets.Scripts
                 radioPlayback.InitSubscriptionComponents(subscriptionManager, subscribeButton, RadioSubscribeName);
             }
 
-            DontDestroyOnLoad(radioPlayback);
+            DontDestroyOnLoad(radioGameObject);
 
             RegisterEvents();
             SetRadioUIInteractableImmediate(false);
