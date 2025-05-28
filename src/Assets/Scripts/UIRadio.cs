@@ -465,12 +465,14 @@ namespace Assets.Scripts
                 coverImage.color = defaultCoverColor;
                 trackName.text = AdInProgressMessage;
                 artistName.text = InfoAdMessage;
+                likeButton.gameObject.SetActive(false);
             }
             else
             {
                 StartCoroutine(radioPlayback.GetCoverImage(coverImage));
                 artistName.text = string.Join(", ", track.ArtistNamesFormatted);
                 trackName.text = track.TrackTitle;
+                likeButton.gameObject.SetActive(true);
             }
         }
 
