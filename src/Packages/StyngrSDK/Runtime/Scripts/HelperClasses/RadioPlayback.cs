@@ -587,7 +587,11 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
         protected virtual void InitRadioWithData(TrackInfo trackInfoBase)
         {
-            previousTrack = currentTrack;
+            if(currentTrack == null || currentTrack.GetTrackType() != TrackType.COMMERCIAL)
+            {
+                previousTrack = currentTrack;
+            }
+
             currentTrack = trackInfoBase;
             TrackReady?.Invoke(this, trackInfoBase);
             //LikeChanged?.Invoke(this, trackInfoBase.IsLiked);
