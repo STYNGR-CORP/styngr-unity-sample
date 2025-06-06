@@ -35,7 +35,7 @@ namespace Assets.Scripts.PlaylistUtils
         {
             currentlyActivePlaylist = activePlaylist;
             this.groupSessionId = groupSessionId;
-            yield return ChangeLicensedPlaylist();
+            yield return ChangePlaylist();
         }
 
         /// <summary>
@@ -72,11 +72,11 @@ namespace Assets.Scripts.PlaylistUtils
 
             if (groupSessionId == Guid.Empty)
             {
-                StartCoroutine(StyngrSDK.CreateGroupSession(Token, Guid.Parse(playlist.Id), OnGroupSessionCreated, OnFailedResponse));
+                StartCoroutine(StyngrSDK.CreateGroupSession(Token, playlist.Id, OnGroupSessionCreated, OnFailedResponse));
             }
             else
             {
-                StartCoroutine(StyngrSDK.ChangeGroupSessionPlaylist(Token, groupSessionId, Guid.Parse(playlist.Id), OnPlaylistChanged, OnFailedResponse));
+                StartCoroutine(StyngrSDK.ChangeGroupSessionPlaylist(Token, groupSessionId, playlist.Id, OnPlaylistChanged, OnFailedResponse));
             }
         }
 

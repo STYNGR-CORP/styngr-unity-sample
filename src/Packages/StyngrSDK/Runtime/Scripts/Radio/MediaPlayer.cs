@@ -279,7 +279,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio
             public string GetId() =>
                 trackId;
 
-            public string GetUrl() =>
+            public string GetStreamUrl() =>
                 trackUrl;
 
             public static bool Equals(MediaClip trackA, MediaClip trackB)
@@ -699,7 +699,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio
             }
             else
             {
-                track = new MediaClip(media.GetId(), media.GetUrl(), null, 0);
+                track = new MediaClip(media.GetId(), media.GetStreamUrl(), null, 0);
             }
 
             void a()
@@ -754,7 +754,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio
             }
             else
             {
-                track = new MediaClip(media.GetId(), media.GetUrl(), null, 0);
+                track = new MediaClip(media.GetId(), media.GetStreamUrl(), null, 0);
             }
 
             void a()

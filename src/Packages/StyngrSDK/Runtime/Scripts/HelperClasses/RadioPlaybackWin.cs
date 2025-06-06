@@ -2,8 +2,8 @@ using CSCore;
 using CSCore.Codecs;
 using CSCore.Ffmpeg;
 using CSCore.SoundOut;
-using Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics;
 using Styngr;
+using Styngr.DTO.Request;
 using Styngr.Enums;
 using Styngr.Exceptions;
 using Styngr.Model.Radio;
@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using UnityEngine;
+using static Packages.StyngrSDK.Runtime.Scripts.Radio.JWT_Token;
 using static Packages.StyngrSDK.Runtime.Scripts.Store.Utility.Enums.OperationProgress;
 
 namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
@@ -85,13 +86,13 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         {
             NextTrackProgressChanged?.Invoke(this, Active);
 
-            void callback(TrackInfoBase trackInfoBase)
+            void callback(TrackInfo trackInfo)
             {
                 lock (lockKey)
                 {
-                    InvokeInteractabilityBasedOnTrackType(trackInfoBase.TrackTypeContent);
+                    InvokeInteractabilityBasedOnTrackType(trackInfo.GetTrackType());
                     NextTrackProgressChanged?.Invoke(this, Finished);
-                    InitRadioWithData(trackInfoBase);
+                    InitRadioWithData(trackInfo);
                     StartCoroutine(InitWasapiPlayer());
                 }
             }
@@ -100,7 +101,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             {
                 if (playlists != null && playlists.Any())
                 {
-                    StartCoroutine(GetTrack(callback, ErrorCallback, GetStatisticsData(EndStreamReason.Completed)));
+                    StartCoroutine(GetTrack(callback, ErrorCallback, GetStatisticsData(EndStreamReason.COMPLETED)));
                 }
             }
         }
@@ -112,15 +113,15 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         {
             IsSkipInProgress = true;
 
-            void callback(TrackInfoBase trackInfoBase)
+            void callback(TrackInfo trackInfo)
             {
                 lock (lockKey)
                 {
                     try
                     {
-                        InvokeInteractabilityBasedOnTrackType(trackInfoBase.TrackTypeContent);
+                        InvokeInteractabilityBasedOnTrackType(trackInfo.GetTrackType());
                         IsSkipInProgress = false;
-                        InitRadioWithData(trackInfoBase);
+                        InitRadioWithData(trackInfo);
                         StartCoroutine(InitWasapiPlayer());
                     }
                     catch (Exception e)
@@ -135,7 +136,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             {
                 if (playlists != null && playlists.Any())
                 {
-                    StartCoroutine(SkipTrack(callback, ErrorCallback, GetStatisticsData(EndStreamReason.Skip)));
+                    StartCoroutine(SkipTrack(callback, ErrorCallback, GetStatisticsData(EndStreamReason.SKIP)));
                 }
             }
         }
@@ -147,7 +148,13 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
             if (wasapiPlayer != null)
             {
-                StartCoroutine(radioContentStrategy.StopPlaylist(GetStatisticsData(endStreamReason), (errorInfo) => OnErrorOccured.Invoke(this, errorInfo)));
+                StartCoroutine(
+                    Styngr.StyngrSDK.StopPlaylistSession(
+                        Token,
+                        playlists.First().Id,
+                        GetStatisticsData(endStreamReason),
+                        () => Debug.Log($"[{nameof(RadioPlaybackWin)}] Playlist session stopped."),
+                        (errorInfo) => OnErrorOccured.Invoke(this, errorInfo)));
 
                 if (shouldDispose)
                 {
@@ -350,75 +357,42 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         }
 
         /// <inheritdoc/>
-        protected override PlaybackStatisticBase GetStatisticsData(EndStreamReason endStreamReason)
+        protected override Statistics GetStatisticsData(EndStreamReason endStreamReason)
         {
-            var appState = isInFocus ? AppState.Open : AppState.Background;
-            wasapiLock?.EnterReadLock();
+            var deviceInformation =
+                Styngr.StyngrSDK.GetDeviceInformation((errorInfo) =>
+                Debug.LogError($"[{nameof(RadioPlayback)}] error occured while fetching device information. Error message: {errorInfo.Errors}."));
+            int? previousTrackId = previousTrack != null ? int.Parse(previousTrack.GetAsset().GetId()) : null;
 
-            bool mute;
-            try
+            return currentTrack.GetTrackType() switch
             {
-                mute = wasapiPlayer?.Volume == 0;
-            }
-            finally
-            {
-                wasapiLock?.ExitReadLock();
-            }
-
-            if (RadioType == MusicType.LICENSED)
-            {
-                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
-                {
-                    return new LicensedPlaybackStatistic(
-                        currentTrack,
-                        playlists.First(),
+                TrackType.MUSICAL or TrackType.MUSICAL_RF =>
+                    new TrackStatistics(
+                        UseType.STREAMING,
                         currentTrackStartTime,
-                        GetTrackProgressSeconds(),
-                        UseType.streaming,
-                        autoplay: true,
-                        mute,
+                        new(GetTrackProgressSeconds()),
                         endStreamReason,
-                        appState,
-                        (AppStateStart)appState);
-                }
-                else
-                {
-                    return new LicensedAdPlaybackStatistic(
-                        currentTrack,
-                        playlists.First(),
+                        int.Parse(currentTrack.GetAsset().GetId()),
+                        previousTrackId,
+                        playlists.First().Id,
+                        autoplay: true,
+                        isMuted: false,
+                        Styngr.StyngrSDK.GetOffset(),
+                        deviceInformation.DeviceType,
+                        deviceInformation.OsVersion,
+                        deviceInformation.OsType,
+                        deviceInformation.DeviceMake,
+                        deviceInformation.DeviceModel),
+                TrackType.COMMERCIAL =>
+                    new AdStatistics(
+                        Guid.Parse(currentTrack.GetAsset().GetId()),
+                        UseType.AD_STREAMING,
                         currentTrackStartTime,
-                        GetTrackProgressSeconds(),
-                        UseType.ad,
-                        autoplay: true,
-                        mute,
-                        EndAdStreamReason.EndOfSession,
-                        appState,
-                        (AppStateStart)appState,
-                        (Guid)(currentTrack as TrackInfo).AdId);
-                }
-            }
-            else
-            {
-                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
-                {
-                    return new RoyaltyFreePlaybackStatistic(
-                        GetTrackProgressSeconds(),
-                        endStreamReason,
-                        (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
-                        playlists.FirstOrDefault());
-                }
-                else
-                {
-                    return new RoyaltyFreeAdPlaybackStatistic(
-                        new RoyaltyFreePlaybackStatistic(
-                            GetTrackProgressSeconds(),
-                            endStreamReason,
-                            (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
-                            playlists.FirstOrDefault()),
-                        UseType.ad,
-                        (currentTrack as RoyaltyFreeTrackInfo).AdId);
-                }
-            }
+                        new(GetTrackProgressSeconds()),
+                        endStreamReason),
+                _ =>
+                    throw new NotSupportedException($"[{nameof(RadioPlayback)}] Track type {currentTrack.GetTrackType()} not supported."),
+            };
         }
 
         private float TrackLengthSeconds()
@@ -449,7 +423,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// </remarks>
         private IEnumerator InitWasapiPlayer()
         {
-            if(isRadioSuspended)
+            if (isRadioSuspended)
             {
                 Debug.LogWarning($"Skipping initialization, radio is suspended. Reason: {suspensionReason}");
             }
@@ -496,13 +470,13 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             try
             {
                 wasapiPlayer.Stopped -= EndOfStream;
-                IWaveSource ffmpegDecoder = new FfmpegDecoder(currentTrack.TrackUrl, "Plugins");
-                Debug.Log($"{currentTrack.TrackUrl}");
+                IWaveSource ffmpegDecoder = new FfmpegDecoder(currentTrack.GetAsset().GetStreamUrl(), "Plugins");
+                Debug.Log($"{currentTrack.GetAsset().GetStreamUrl()}");
                 wasapiPlayer.Stop();
 
                 wasapiPlayer.Initialize(ffmpegDecoder);
                 wasapiPlayer.Volume = volume;
-                currentTrackStartTime = DateTime.Now;
+                currentTrackStartTime = DateTimeOffset.Now;
 
                 suspensionLock.EnterReadLock();
                 try
@@ -533,13 +507,13 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             try
             {
                 wasapiPlayer.Stopped -= EndOfStream;
-                var source = CodecFactory.Instance.GetCodec(new Uri(currentTrack.TrackUrl));
+                var source = CodecFactory.Instance.GetCodec(new Uri(currentTrack.GetAsset().GetStreamUrl()));
 
                 wasapiPlayer.Stop();
 
                 wasapiPlayer.Initialize(source);
                 wasapiPlayer.Volume = volume;
-                currentTrackStartTime = DateTime.Now;
+                currentTrackStartTime = DateTimeOffset.Now;
 
                 suspensionLock.EnterReadLock();
                 try
@@ -562,6 +536,10 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
                 {
                     wasapiPlayer.Stopped += EndOfStream;
                 }
+            }
+            catch(Exception e)
+            {
+                Debug.LogError(e.Message);
             }
             finally
             {
