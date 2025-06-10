@@ -1,5 +1,4 @@
 ﻿using Packages.StyngrSDK.Runtime.Scripts.HelperClasses;
-using Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies;
 using Styngr.Enums;
 using Styngr.Exceptions;
 using Styngr.Model.Radio;
@@ -8,7 +7,6 @@ using System.Collections.Concurrent;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Packages.StyngrSDK.Runtime.Scripts.Store.Utility.Enums;
-using Packages.StyngrSDK.Runtime.Scripts.Store;
 
 
 
@@ -114,7 +112,7 @@ namespace Assets.Scripts
         {
             if (radioPlayback != null && radioPlayback.GetPlaybackState().Equals(PlaybackState.Playing))
             {
-                radioPlayback.StopRadio(EndStreamReason.EndSession, true);
+                radioPlayback.StopRadio(EndStreamReason.END_SESSION, true);
             }
         }
 
@@ -171,7 +169,7 @@ namespace Assets.Scripts
         {
             if (sendStatisticsOnDestroy && radioPlayback != null && radioPlayback.GetPlaybackState().Equals(PlaybackState.Playing))
             {
-                radioPlayback.StopRadio(EndStreamReason.ApplicationClosed, true);
+                radioPlayback.StopRadio(EndStreamReason.APPLICATION_CLOSED, true);
             }
 
             StopAllCoroutines();
@@ -189,12 +187,9 @@ namespace Assets.Scripts
         /// <summary>
         /// Initializes the radio as royalty type.
         /// </summary>
-        public void InitLicensedRadio(bool resetSessionId = false)
+        public void InitRadio(bool resetSessionId = false)
         {
             CreateRadioScript();
-
-            radioPlayback.RadioType = MusicType.LICENSED;
-            radioPlayback.SetStrategy(new RoyaltyContentStrategy());
 
             StartCoroutine(radioPlayback.InitWithRandomPlaylist(resetSessionId));
         }
@@ -202,12 +197,9 @@ namespace Assets.Scripts
         /// <summary>
         /// Initializes the radio as royalty type with selected playlist.
         /// </summary>
-        public void InitLicensedRadio(Playlist selectedPlaylist)
+        public void InitRadio(Playlist selectedPlaylist)
         {
             CreateRadioScript();
-
-            radioPlayback.RadioType = MusicType.LICENSED;
-            radioPlayback.SetStrategy(new RoyaltyContentStrategy());
 
             StartCoroutine(radioPlayback.InitWithPlaylist(selectedPlaylist, PlaybackType.Radio, true));
         }
@@ -218,9 +210,6 @@ namespace Assets.Scripts
         public void InitRoyaltyFreeRadio(Playlist selectedPlaylist)
         {
             CreateRadioScript();
-
-            radioPlayback.RadioType = MusicType.ROYALTY_FREE;
-            radioPlayback.SetStrategy(new RoyaltyFreeContentStrategy());
 
             StartCoroutine(radioPlayback.InitWithPlaylist(selectedPlaylist, PlaybackType.Radio, true));
         }
@@ -274,7 +263,7 @@ namespace Assets.Scripts
 
         private void OnPlaylistChanged(object sender, Playlist playlist)
         {
-            radioPlayback.StopRadio(EndStreamReason.PlaylistChange, shouldDispose: true);
+            radioPlayback.StopRadio(EndStreamReason.PLAYLIST_CHANGE, shouldDispose: true);
 
             playButton.style.backgroundImage = new StyleBackground(playImage);
             StartCoroutine(radioPlayback.InitWithPlaylist(playlist, PlaybackType.Radio, enableAutoplay: true));
@@ -285,8 +274,8 @@ namespace Assets.Scripts
 
         private void OnErrorOccured(object sender, ErrorInfo errorInfo)
         {
-           Debug.LogError($"{nameof(UIRadio)}: Error occured - {errorInfo.Errors}");
-       
+            Debug.LogError($"{nameof(UIRadio)}: Error occured - {errorInfo.Errors}");
+
         }
 
         private void OnLimitWarningInfo(object sender, string message) =>
@@ -308,12 +297,12 @@ namespace Assets.Scripts
             playButton.SetEnabled(value);
             muteToggle.SetEnabled(value);
             volumeSlider.SetEnabled(value);
-     
-            likeButton.SetEnabled(value);         
+
+            likeButton.SetEnabled(value);
         }
 
         private void InitUIElements()
-        {          
+        {
             // init text labels 
             artistName = rootVisualElement.Q<Label>("ArtistName");
             trackName = rootVisualElement.Q<Label>("TrackName");
@@ -364,15 +353,11 @@ namespace Assets.Scripts
 
             if (selectedPlaylist == null)
             {
-                InitLicensedRadio(true);
-            }
-            else if (selectedPlaylist.Type == MusicType.LICENSED)
-            {
-                InitLicensedRadio(selectedPlaylist);
+                InitRadio(true);
             }
             else
             {
-                InitRoyaltyFreeRadio(selectedPlaylist);
+                InitRadio(selectedPlaylist);
             }
         }
 
@@ -397,9 +382,9 @@ namespace Assets.Scripts
         private void OnLikeChanged(object sender, bool isLiked) =>
            likeButton.style.backgroundImage = isLiked ? new StyleBackground(likedImage) : new StyleBackground(unlikedImage);
 
-        private void OnTrackReady(object sender, TrackInfoBase track)
+        private void OnTrackReady(object sender, TrackInfo track)
         {
-            if (track.TrackTypeContent == TrackType.COMMERCIAL)
+            if (track.GetTrackType() == TrackType.COMMERCIAL)
             {
                 coverImage.sprite = defaultCoverImage;
                 coverImage.style.color = defaultCoverColor;
@@ -409,8 +394,8 @@ namespace Assets.Scripts
             else
             {
                 StartCoroutine(radioPlayback.GetCoverImage(coverImage));
-                artistName.text = string.Join(", ", track.ArtistNamesFormatted);
-                trackName.text = track.TrackTitle;
+                artistName.text = track.GetAsset().GetArtistsFormatted(", ");
+                trackName.text = track.GetAsset().Title;
             }
         }
 

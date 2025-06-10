@@ -1,15 +1,12 @@
 using Assets.Utils.HelperClasses;
 using Packages.StyngrSDK.Runtime.Scripts.Radio;
-using Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics;
-using Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies;
-using Packages.StyngrSDK.Runtime.Scripts.Store;
 using Packages.StyngrSDK.Runtime.Scripts.Store.Utility;
 using Packages.StyngrSDK.Runtime.Scripts.Store.Utility.Enums;
 using Styngr;
+using Styngr.DTO.Request;
 using Styngr.DTO.Response.SubscriptionsAndBundles;
 using Styngr.Enums;
 using Styngr.Exceptions;
-using Styngr.Interfaces;
 using Styngr.Model.Radio;
 using System;
 using System.Collections;
@@ -18,7 +15,6 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.Windows;
 using static Packages.StyngrSDK.Runtime.Scripts.Radio.JWT_Token;
 
 namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
@@ -37,16 +33,16 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
         protected AudioSource audioSource;
         protected List<Playlist> playlists;
-        protected TrackInfoBase currentTrack;
+        protected TrackInfo currentTrack;
+        protected TrackInfo previousTrack;
         protected MediaPlayer.MediaClip activeTrack = null;
         protected ConcurrentQueue<Action> asyncQueue = new();
         protected bool isInFocus;
         protected float volume = 0.5f;
-        protected DateTime currentTrackStartTime;
+        protected DateTimeOffset currentTrackStartTime;
         protected StreamType streamType;
         protected PlaybackType playbackType;
         protected bool autoplayEnabled;
-        protected IRadioContentStrategy radioContentStrategy;
         protected SubscriptionHelper subscriptionHelper = SubscriptionHelper.Instance;
         protected SubscriptionManager subscriptionManager;
         protected Button subscribeButton;
@@ -77,7 +73,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// <summary>
         /// Invoked when the track is received from the backend and is ready to be played.
         /// </summary>
-        public EventHandler<TrackInfoBase> TrackReady { get; set; }
+        public EventHandler<TrackInfo> TrackReady { get; set; }
 
         /// <summary>
         /// Invoked when the radio player is initialized with all required data.
@@ -153,8 +149,8 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// <summary>
         /// Gets the active track id.
         /// </summary>
-        public int CurrentTrackId =>
-            currentTrack.TrackId;
+        public string CurrentTrackId =>
+            currentTrack.GetAsset().GetId();
 
         /// <summary>
         /// Inits radio with specific playlist.
@@ -167,6 +163,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
                 yield return new WaitUntil(() => !string.IsNullOrEmpty(Token));
             }
 
+            RadioType = playlist.Type;
             autoplayEnabled = enableAutoplay;
             this.playbackType = playbackType;
             playlists = new List<Playlist> { playlist };
@@ -229,7 +226,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         {
             NextTrackProgressChanged?.Invoke(this, OperationProgress.Active);
 
-            void callback(TrackInfoBase trackInfo)
+            void callback(TrackInfo trackInfo)
             {
                 NextTrackProgressChanged?.Invoke(this, OperationProgress.Finished);
                 lock (lockKey)
@@ -237,8 +234,8 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
                     currentTrack = trackInfo as TrackInfo;
                     activeTrack?.CancelRequest();
 
-                    MediaPlayer.main.Play(currentTrack as TrackInfo);
-                    asyncQueue.Enqueue(new Action(() => LikeChanged.Invoke(this, currentTrack.IsLiked)));
+                    MediaPlayer.main.Play(currentTrack.GetAsset().StreamUrl);
+                    //asyncQueue.Enqueue(new Action(() => LikeChanged.Invoke(this, currentTrack.IsLiked)));
                 }
             }
 
@@ -252,7 +249,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             {
                 if (playlists != null && playlists.Any())
                 {
-                    StartCoroutine(GetTrack(callback, errorCallback, GetStatisticsData(EndStreamReason.Completed)));
+                    StartCoroutine(GetTrack(callback, errorCallback, GetStatisticsData(EndStreamReason.COMPLETED)));
                 }
             }
         }
@@ -264,15 +261,15 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         {
             IsSkipInProgress = true;
 
-            void callback(TrackInfoBase trackInfoBase)
+            void callback(TrackInfo trackInfo)
             {
                 lock (lockKey)
                 {
                     IsSkipInProgress = false;
-                    currentTrack = trackInfoBase;
+                    currentTrack = trackInfo;
                     activeTrack?.CancelRequest();
-                    MediaPlayer.main.Play(trackInfoBase as TrackInfo);
-                    asyncQueue.Enqueue(new Action(() => LikeChanged.Invoke(this, currentTrack.IsLiked)));
+                    MediaPlayer.main.Play(trackInfo.GetAsset().StreamExpiresAt);
+                    //asyncQueue.Enqueue(new Action(() => LikeChanged.Invoke(this, currentTrack.IsLiked)));
                 }
             }
 
@@ -292,7 +289,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             {
                 if (playlists != null && playlists.Any())
                 {
-                    StartCoroutine(SkipTrack(callback, errorCallback, GetStatisticsData(EndStreamReason.Skip)));
+                    StartCoroutine(SkipTrack(callback, errorCallback, GetStatisticsData(EndStreamReason.SKIP)));
                 }
             }
         }
@@ -304,8 +301,13 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// <param name="shouldDispose">Indication if the radio provider should be disposed.</param>
         public virtual void StopRadio(EndStreamReason endStreamReason, bool shouldDispose)
         {
-            Debug.Log($"[{nameof(RadioPlayback)}] Radio content strategy type: {radioContentStrategy.GetType().Name}.");
-            StartCoroutine(radioContentStrategy.StopPlaylist(GetStatisticsData(endStreamReason), (errorInfo) => OnErrorOccured?.Invoke(this, errorInfo)));
+            StartCoroutine(
+                Styngr.StyngrSDK.StopPlaylistSession(
+                    Token,
+                    playlists.First().Id,
+                    GetStatisticsData(endStreamReason),
+                    () => Debug.Log($"[{nameof(RadioPlayback)}] Playlist session stopped."),
+                    (errorInfo) => OnErrorOccured?.Invoke(this, errorInfo)));
 
             MediaPlayer.main.Stop();
 
@@ -382,7 +384,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
             if (currentTrack != null)
             {
-                StartCoroutine(Styngr.StyngrSDK.GetLike(Token, currentTrack.GetId(), onSuccess: GetLikeTrackCallback, onFail: errorCallback));
+                StartCoroutine(Styngr.StyngrSDK.GetLike(Token, currentTrack.GetAsset().GetId(), onSuccess: GetLikeTrackCallback, onFail: errorCallback));
             }
         }
 
@@ -470,7 +472,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
             if (currentTrack != null)
             {
-                StartCoroutine(Styngr.StyngrSDK.AddTrackToSpotify(Token, SpotifyAccessToken, currentTrack.GetId(), onSuccess: callback, onFail: errorCallback));
+                StartCoroutine(Styngr.StyngrSDK.AddTrackToSpotify(Token, SpotifyAccessToken, currentTrack.GetAsset().GetId(), onSuccess: callback, onFail: errorCallback));
             }
         }
 
@@ -528,13 +530,6 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         }
 
         /// <summary>
-        /// Sets the radio content strategy.
-        /// </summary>
-        /// <param name="strategy">The radio content strategy.</param>
-        public void SetStrategy(IRadioContentStrategy strategy) =>
-            radioContentStrategy = strategy;
-
-        /// <summary>
         /// Gets the cover image and sets it to the forwared image graphic.
         /// </summary>
         /// <param name="image">The image texture will be changed if the texure if fetched successfully.</param>
@@ -543,7 +538,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         {
             if (RadioType == MusicType.LICENSED)
             {
-                yield return image.GetTexture(currentTrack.CoverImageURL);
+                yield return image.GetTexture((currentTrack.GetAsset() as LicensedAsset).CoverArtUrl);
             }
         }
 
@@ -556,7 +551,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         {
             if (RadioType == MusicType.LICENSED)
             {
-                yield return image.GetTexture(currentTrack.CoverImageURL);
+                yield return image.GetTexture((currentTrack.GetAsset() as LicensedAsset).CoverArtUrl);
             }
         }
 
@@ -590,11 +585,16 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             Application.wantsToQuit += OnAppClosing;
         }
 
-        protected virtual void InitRadioWithData(TrackInfoBase trackInfoBase)
+        protected virtual void InitRadioWithData(TrackInfo trackInfoBase)
         {
+            if(currentTrack == null || currentTrack.GetTrackType() != TrackType.COMMERCIAL)
+            {
+                previousTrack = currentTrack;
+            }
+
             currentTrack = trackInfoBase;
             TrackReady?.Invoke(this, trackInfoBase);
-            LikeChanged?.Invoke(this, trackInfoBase.IsLiked);
+            //LikeChanged?.Invoke(this, trackInfoBase.IsLiked);
 
             void ContinueExecution()
             {
@@ -609,33 +609,26 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
         protected virtual IEnumerator GetFirstTrack(Action<ErrorInfo> onFail)
         {
-            if (!Guid.TryParse(playlists.First().Id, out var playlistGuid))
-            {
-                onFail(new ErrorInfo()
-                {
-                    errorMessage = $"Playlist id ({playlists.First().Id}) not in the guid format."
-                });
-
-                yield break;
-            }
-
-            yield return radioContentStrategy.InitRadio(playlistGuid, streamType, GetFirstTrackCallback, onFail);
+            yield return Styngr.StyngrSDK.StartPlaylistSession(
+                Token,
+                playlists.First().Id,
+                GetFirstTrackCallback,
+                onFail);
         }
 
         /// <summary>
         /// When first track is requested in order to start the radio, response is forwarded to this method.
         /// </summary>
         /// <param name="trackInfo">Useful information about the track.</param>
-        protected virtual void GetFirstTrackCallback(TrackInfoBase trackInfo)
+        protected virtual void GetFirstTrackCallback(TrackInfo trackInfo)
         {
-            Debug.Log($"[{nameof(RadioPlayback)}] Track URL: {trackInfo.TrackUrl}");
             Init();
 
-            IsCommercialInProgress = trackInfo.TrackTypeContent == TrackType.COMMERCIAL;
+            IsCommercialInProgress = trackInfo.GetTrackType() == TrackType.COMMERCIAL;
 
             InitRadioWithData(trackInfo);
             RadioInteractabilityChanged?.Invoke(this, true);
-            LikeChanged?.Invoke(this, trackInfo.IsLiked);
+            //LikeChanged?.Invoke(this, trackInfo.IsLiked);
         }
 
         /// <summary>
@@ -656,9 +649,9 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// <param name="onFail">Action that will be invoked on failed response.</param>
         /// <param name="playbackStatisticData">Unified playback statistic data.</param>
         /// <returns><see cref="IEnumerator"/> so that the unity coroutine knows where to continue the execution.</returns>
-        protected virtual IEnumerator GetTrack(Action<TrackInfoBase> onSuccess, Action<ErrorInfo> onFail, PlaybackStatisticBase playbackStatisticData)
+        protected virtual IEnumerator GetTrack(Action<TrackInfo> onSuccess, Action<ErrorInfo> onFail, Statistics playbackStatisticData)
         {
-            yield return radioContentStrategy.Next(onSuccess, onFail, streamType, playbackStatisticData);
+            yield return Styngr.StyngrSDK.GetRadioTrack(Token, playlists.First().Id, onSuccess, onFail, playbackStatisticData, stream: streamType);
         }
 
         /// <summary>
@@ -668,9 +661,9 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// <param name="onFail">Action that will be invoked on failed response .</param>
         /// <param name="playbackStatisticData">Unified playback statistic data.</param>
         /// <returns><see cref="IEnumerator"/> so that the unity coroutine knows where to continue execution.</returns>
-        protected virtual IEnumerator SkipTrack(Action<TrackInfoBase> onSuccess, Action<ErrorInfo> onFail, PlaybackStatisticBase playbackStatisticData)
+        protected virtual IEnumerator SkipTrack(Action<TrackInfo> onSuccess, Action<ErrorInfo> onFail, Statistics playbackStatisticData)
         {
-            yield return radioContentStrategy.Skip(onSuccess, onFail, streamType, playbackStatisticData);
+            yield return Styngr.StyngrSDK.GetRadioTrack(Token, playlists.First().Id, onSuccess, onFail, playbackStatisticData, stream: streamType);
         }
 
         /// <summary>
@@ -678,64 +671,42 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// </summary>
         /// <param name="endStreamReason">The reason for the end of the playback.</param>
         /// <returns>Unified statistic data.</returns>
-        protected virtual PlaybackStatisticBase GetStatisticsData(EndStreamReason endStreamReason)
+        protected virtual Statistics GetStatisticsData(EndStreamReason endStreamReason)
         {
             var appState = isInFocus ? AppState.Open : AppState.Background;
+            var deviceInformation =
+                Styngr.StyngrSDK.GetDeviceInformation((errorInfo) =>
+                Debug.LogError($"[{nameof(RadioPlayback)}] error occured while fetching device information. Error message: {errorInfo.Errors}."));
 
-            if (RadioType == MusicType.LICENSED)
+            return currentTrack.GetTrackType() switch
             {
-                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
-                {
-                    return new LicensedPlaybackStatistic(
-                        currentTrack,
-                        playlists.First(),
+                TrackType.MUSICAL or TrackType.MUSICAL_RF =>
+                    new TrackStatistics(
+                        UseType.STREAMING,
                         currentTrackStartTime,
-                        activeTrack.duration,
-                        UseType.streaming,
-                        autoplay: true,
-                        mute: false,
+                        new(activeTrack.duration),
                         endStreamReason,
-                        appState,
-                        (AppStateStart)appState);
-                }
-                else
-                {
-                    return new LicensedAdPlaybackStatistic(
-                        currentTrack,
-                        playlists.First(),
+                        int.Parse(currentTrack.GetAsset().GetId()),
+                        int.Parse(previousTrack.GetAsset().GetId()),
+                        playlists.First().Id,
+                        autoplay: true,
+                        isMuted: false,
+                        Styngr.StyngrSDK.GetOffset(),
+                        deviceInformation.DeviceType,
+                        deviceInformation.OsVersion,
+                        deviceInformation.OsType,
+                        deviceInformation.DeviceMake,
+                        deviceInformation.DeviceModel),
+                TrackType.COMMERCIAL =>
+                    new AdStatistics(
+                        Guid.Parse(currentTrack.GetAsset().GetId()),
+                        UseType.AD_STREAMING,
                         currentTrackStartTime,
-                        activeTrack.duration,
-                        UseType.ad,
-                        autoplay: true,
-                        mute: false,
-                        EndAdStreamReason.EndOfSession,
-                        appState,
-                        (AppStateStart)appState,
-                        (Guid)(currentTrack as TrackInfo).AdId);
-                }
-            }
-            else
-            {
-                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
-                {
-                    return new RoyaltyFreePlaybackStatistic(
-                        GetTrackProgressSeconds(),
-                        endStreamReason,
-                        (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
-                        playlists.FirstOrDefault());
-                }
-                else
-                {
-                    return new RoyaltyFreeAdPlaybackStatistic(
-                        new RoyaltyFreePlaybackStatistic(
-                            GetTrackProgressSeconds(),
-                            endStreamReason,
-                            (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
-                            playlists.FirstOrDefault()),
-                        UseType.ad,
-                        (currentTrack as RoyaltyFreeTrackInfo).AdId);
-                }
-            }
+                        new(activeTrack.duration),
+                        endStreamReason),
+                _ =>
+                    throw new NotSupportedException($"[{nameof(RadioPlayback)}] Track type {currentTrack.GetTrackType()} not supported."),
+            };
         }
 
         /// <summary>
@@ -747,15 +718,14 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// </remarks>
         protected bool OnAppClosing()
         {
-            if (radioContentStrategy == null || GetPlaybackState() == PlaybackState.NotInitialized)
+            if (GetPlaybackState() == PlaybackState.NotInitialized)
             {
                 return true;
             }
 
             IEnumerator ExecuteBeforeExit()
             {
-                yield return radioContentStrategy.StopPlaylist(GetStatisticsData(EndStreamReason.ApplicationClosed), OnError);
-                radioContentStrategy = null;
+                yield return Styngr.StyngrSDK.StopPlaylistSession(Token, playlists.First().Id, GetStatisticsData(EndStreamReason.APPLICATION_CLOSED), () => Debug.Log("Playlist session stopped."), OnError);
             }
 
             var quitAppHandler = new GameObject(nameof(QuitApplicationHandler)).AddComponent<QuitApplicationHandler>();
@@ -771,7 +741,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// <returns><see cref="IEnumerator"/> so that Unity coroutine knows where to continue execution.</returns>
         protected IEnumerator NotifyAboutRemainingLimitsIfNeeded(int warningLimit)
         {
-            if (RadioType != MusicType.LICENSED || currentTrack.TrackTypeContent == TrackType.COMMERCIAL)
+            if (RadioType != MusicType.LICENSED || currentTrack.GetTrackType() == TrackType.COMMERCIAL)
             {
                 yield break;
             }
@@ -827,11 +797,11 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             var trackInfo = currentTrack as TrackInfo;
 
             if (subscriptionHelper.IsSubscriptionStreamBased(activeSubscription) &&
-                activeSubscription.RemainingStreamCount <= trackInfo.RemainingNumberOfSkips &&
+                activeSubscription.RemainingStreamCount <= trackInfo.RemainingSkips &&
                 activeSubscription.RemainingStreamCount <= warningLimit &&
                 ActivePlaylist.MonetizationType == MonetizationType.PREMIUM)
             {
-                LimitWarning?.Invoke(this, string.Format(NumberOfStreamsLeftMessage, trackInfo.RemainingNumberOfStreams));
+                LimitWarning?.Invoke(this, string.Format(NumberOfStreamsLeftMessage, trackInfo.RemainingStreams));
                 yield break;
             }
 
@@ -844,16 +814,16 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
             bool userDoesNotHaveASubscription = SubscriptionHelper.Instance.IsSubscriptionExpired(errorInfo.errorCode);
 
-            if (trackInfo.RemainingNumberOfSkips == 0 ||
+            if (trackInfo.RemainingSkips == 0 ||
                 subscriptionHelper.IsPlaylistPremium(ActivePlaylist) &&
                 userDoesNotHaveASubscription)
             {
                 LimitWarning?.Invoke(this, LimitReachedMessage);
                 SkipLimitReached?.Invoke(this, EventArgs.Empty);
             }
-            else if (trackInfo.RemainingNumberOfSkips <= warningLimit)
+            else if (trackInfo.RemainingSkips <= warningLimit)
             {
-                LimitWarning?.Invoke(this, string.Format(NumberOfSkipsLeftMessage, trackInfo.RemainingNumberOfSkips));
+                LimitWarning?.Invoke(this, string.Format(NumberOfSkipsLeftMessage, trackInfo.RemainingSkips));
             }
         }
 
@@ -861,14 +831,14 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         {
             var trackInfo = currentTrack as TrackInfo;
 
-            if (trackInfo.RemainingNumberOfSkips == 0)
+            if (trackInfo.RemainingSkips == 0)
             {
                 LimitWarning?.Invoke(this, LimitReachedMessage);
                 SkipLimitReached?.Invoke(this, EventArgs.Empty);
             }
-            else if (trackInfo.RemainingNumberOfSkips <= warningLimit)
+            else if (trackInfo.RemainingSkips <= warningLimit)
             {
-                LimitWarning?.Invoke(this, string.Format(NumberOfSkipsLeftMessage, trackInfo.RemainingNumberOfSkips));
+                LimitWarning?.Invoke(this, string.Format(NumberOfSkipsLeftMessage, trackInfo.RemainingSkips));
             }
         }
 
@@ -947,8 +917,8 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             {
                 if (currentTrack != null && currentTrack.OK)
                 {
-                    currentTrackStartTime = DateTime.Now;
-                    activeTrack = MediaPlayer.main.Play(currentTrack as TrackInfo);
+                    currentTrackStartTime = DateTimeOffset.Now;
+                    activeTrack = MediaPlayer.main.Play(currentTrack.GetAsset().GetStreamUrl());
                 }
             }
         }
@@ -966,36 +936,9 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         {
             lock (lockKey)
             {
-                currentTrack.IsLiked = likeInfo.IsLiked;
-                LikeChanged.Invoke(this, currentTrack.IsLiked);
+                //currentTrack.IsLiked = likeInfo.IsLiked;
+                //LikeChanged.Invoke(this, currentTrack.IsLiked);
             }
-        }
-
-        private void SendStatisticDefault(EndStreamReason endStreamReason, MediaPlayer.PlaybackInfo pi)
-        {
-            if (pi == null || pi.track == null)
-            {
-                throw new ArgumentNullException($"[{nameof(RadioPlayback)}] PlaybackInfo and track can not be null.");
-            }
-
-            float duration = pi.track.duration * pi.track.Progress;
-
-            StartCoroutine(
-                Styngr.StyngrSDK.SendPlaybackStatistic(
-                    Token,
-                    currentTrack,
-                    playlist: playlists.First(),
-                    currentTrackStartTime,
-                    new Duration(duration),
-                    UseType.streaming,
-                    true,
-                    pi.mute,
-                    endStreamReason,
-                    pi.appState,
-                    pi.appStateStart,
-                    PlaybackType.Radio,
-                    () => Debug.Log($"[{nameof(RadioPlayback)}] Statistic for track (Id: {currentTrack.TrackId}) sent successfully."),
-                    OnError));
         }
 
         private IEnumerator CheckSubscriptionOnAwake()

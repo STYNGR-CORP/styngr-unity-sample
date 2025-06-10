@@ -238,15 +238,11 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Store
             SetPause();
 
             Unsubscribe();
-
-            if (MediaPlayer.main != null) SendStatisticDefault(EndStreamReason.Completed, MediaPlayer.main.PlaybackInfoSnap);
         }
 
         private void OnEndStop(object sender, MediaPlayer.PlaybackInfo e)
         {
             Unsubscribe();
-
-            if (MediaPlayer.main != null) SendStatisticDefault(EndStreamReason.Unknown, MediaPlayer.main.PlaybackInfoSnap);
         }
 
         private void OnBeginPlayback(object sender, MediaPlayer.PlaybackInfo pi)
@@ -287,7 +283,6 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Store
                 var pi = MediaPlayer.main.PlaybackInfoSnap;
                 if (pi != null && pi.playbackState == PlaybackState.Playing)
                 {
-                    SendStatisticDefault(EndStreamReason.Unknown, pi);
                     MediaPlayer.main.StopImmediate();
                 }
             }
@@ -306,39 +301,6 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Store
         private void Update()
         {
             SetConfiguration();
-        }
-
-        private void SendStatisticDefault(EndStreamReason endStreamReason, MediaPlayer.PlaybackInfo pi)
-        {
-            if (pi == null || pi.track == null)
-            {
-                throw new ArgumentNullException($"[{nameof(RadioPlayback)}] PlaybackInfo and track can not be null.");
-            }
-
-            static void OnError(ErrorInfo errorInfo)
-            {
-                Debug.LogError($"Error response: {errorInfo.Errors}");
-                Debug.LogError($"Stack trace: {errorInfo.StackTrace}");
-            }
-
-            float duration = pi.track.duration * pi.track.Progress;
-
-            GameManager.Instance.
-                SendPlaybackStatistic(
-                    JWT_Token.Token,
-                    pi.track,
-                    null,
-                    DateTime.Now,
-                    new Duration(duration),
-                    UseType.styng,
-                    false,
-                    pi.mute,
-                    endStreamReason,
-                    pi.appState,
-                    pi.appStateStart,
-                    PlaybackType.Radio,
-                    () => Debug.Log($"[{nameof(UI_MediaPlayer)}] Statistic for track (Id: {pi.track.GetId()}) sent successfully."),
-                    OnError);
         }
     }
 }

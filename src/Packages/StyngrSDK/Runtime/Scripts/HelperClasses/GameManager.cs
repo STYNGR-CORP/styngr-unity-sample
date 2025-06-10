@@ -46,30 +46,6 @@ namespace Assets.Scripts
             StartCoroutine(ExecuteJobAndChangeScene(sceneName, executeBeforeChange));
         }
 
-        public void SendPlaybackStatistic(
-            string jwtToken,
-            IId track,
-            IId playlist,
-            DateTime start,
-            Duration duration,
-            UseType useType,
-            bool autoplay,
-            bool isMuted,
-            EndStreamReason? endStreamReason,
-            AppState? appState,
-            AppStateStart appStateStart,
-            PlaybackType playbackType,
-            Action onSuccess,
-            Action<ErrorInfo> onFail)
-        {
-            StartCoroutine(
-                StyngrSDK.SendPlaybackStatistic(
-                    jwtToken, track, playlist, start,
-                    duration, useType, autoplay, isMuted,
-                    endStreamReason, appState, appStateStart,
-                    playbackType, onSuccess, onFail));
-        }
-
         private IEnumerator ExecuteJobAndChangeScene(string sceneName, IEnumerator executeBeforeChange)
         {
             yield return executeBeforeChange;

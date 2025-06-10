@@ -3,7 +3,6 @@ using Styngr.Enums;
 using Styngr.Model.Radio;
 using System;
 using System.Collections;
-using UnityEngine;
 using static Packages.StyngrSDK.Runtime.Scripts.Radio.JWT_Token;
 
 namespace Assets.Scripts.PlaylistUtils
@@ -16,7 +15,7 @@ namespace Assets.Scripts.PlaylistUtils
         protected override void OnPlaylistSelected(object sender, Playlist playlist)
         {
             base.OnPlaylistSelected(sender, playlist);
-            StartCoroutine(SetNewPlaylistAndNotify(playlist));
+            SetNewPlaylistAndNotify(playlist);
         }
 
         protected override void OnPlaylistSelectionCanceled(object sender, EventArgs e)
@@ -29,13 +28,8 @@ namespace Assets.Scripts.PlaylistUtils
             base.OnPlaylistSelectionCanceled(sender, e);
         }
 
-        private IEnumerator SetNewPlaylistAndNotify(Playlist playlist)
+        private void SetNewPlaylistAndNotify(Playlist playlist)
         {
-            if (MusicType == MusicType.LICENSED)
-            {
-                yield return StyngrSDK.StartPlaylistSession(Token, selectedPlaylist.GetId());
-            }
-
             PlaylistChanged?.Invoke(this, playlist);
         }
     }

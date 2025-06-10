@@ -1,7 +1,6 @@
 ﻿using System.Collections;
 using TMPro;
 using UnityEngine;
-using UnityEngine.AI;
 using UnityEngine.EventSystems;
 
 namespace Assets.Scripts.Layouting
