@@ -64,6 +64,7 @@
     <Compile Include="Assets\Scripts\PlaylistUtils\PlaylistController.cs" />
     <Compile Include="Assets\Scripts\PurchaseConfirmationDialog.cs" />
     <Compile Include="Assets\Scripts\SubscriptionsAndBundles\RadioBundlesHandler.cs" />
+    <Compile Include="Assets\Scripts\PlaylistUtils\PlaylistService.cs" />
     <Compile Include="Assets\Scripts\ConfigurationLoader.cs" />
     <Compile Include="Assets\Scripts\GroupSession\DTO\Responses\ActiveGroupSessionDTO.cs" />
     <Compile Include="Assets\Scripts\SubscriptionsAndBundles\SubscriptionTile.cs" />
@@ -127,6 +128,7 @@
     <Compile Include="Assets\Scripts\SubscriptionsAndBundles\RadioSubscriptionHandler.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\LevelList.cs" />
     <Compile Include="Assets\Scripts\SubscriptionInfoDialog.cs" />
+    <Compile Include="Assets\Scripts\PlaylistUtils\IPlaylistProvider.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\Match.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\LightManager.cs" />
     <Compile Include="Assets\WebGLSupport\WebGLInput\Detail\RebuildChecker.cs" />
@@ -149,8 +151,6 @@
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF SSD.shader" />
     <None Include="Assets\UI\UI Toolkit\StripeRadio.uxml" />
     <None Include="Assets\UI\UI Toolkit\StripeRadioTemplate.uxml" />
-    <None Include="Assets\Packages\WebSocketSharp-netstandard.1.0.1\lib\netstandard2.0\websocket-sharp.xml" />
-    <None Include="Assets\Packages\WebSocketSharp-netstandard.1.0.1\lib\netstandard2.0\websocket-sharp.dll" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Surface-Mobile.shader" />
     <None Include="Assets\UI\UI Toolkit\RadioStripe.uss" />
     <None Include="Assets\GemHunterMatch\UI\GoalGemTemplate.uxml" />

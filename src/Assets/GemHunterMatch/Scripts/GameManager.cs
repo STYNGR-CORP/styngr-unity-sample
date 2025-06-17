@@ -1,3 +1,4 @@
+using Assets.Scripts.PlaylistUtils;
 using Styngr.Model.Radio;
 using System;
 using System.Collections;
@@ -14,12 +15,12 @@ namespace Match3
     /// so we can press play from any point of the game without having to add it to every scene and test if it already exist
     /// </summary>
     [DefaultExecutionOrder(-9999)]
-    public class GameManager : MonoBehaviour
+    public class GameManager : MonoBehaviour, IPlaylistProvider
     {
         //This is set to true when the manager is deleted. This is useful as the manager can be deleted before other
         //objects 
         private static bool s_IsShuttingDown = false;
-        private static Playlist selectedPlaylist = null;
+        private static Playlist selectedPlaylist;
 
         public static GameManager Instance
         {
@@ -46,7 +47,7 @@ namespace Match3
             return s_IsShuttingDown;
         }
 
-        public static Playlist GetSelectedPlaylist()
+        public Playlist GetSelectedPlaylist()
         {
             return selectedPlaylist;
         }
@@ -139,6 +140,8 @@ namespace Match3
                 m_LoseEffect = Instantiate(Settings.VisualSettings.LoseEffect, transform);
 
                 LoadSoundData();
+
+                PlaylistService.RegisterProvider(this);
             }
         }
 

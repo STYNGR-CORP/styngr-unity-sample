@@ -565,7 +565,7 @@ namespace Assets.Scripts
 
             radioTypeSelector.SetActive(false);
 
-            var selectedPlaylist = Match3.GameManager.GetSelectedPlaylist();
+            var selectedPlaylist = PlaylistService.GetSelectedPlaylist();
 
             if (selectedPlaylist == null)
             {
