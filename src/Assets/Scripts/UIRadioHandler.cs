@@ -8,7 +8,7 @@ using System.Collections.Concurrent;
 using UnityEngine;
 using UnityEngine.UIElements;
 using Packages.StyngrSDK.Runtime.Scripts.Store.Utility.Enums;
-using Packages.StyngrSDK.Runtime.Scripts.Store;
+using Assets.Scripts.PlaylistUtils;
 
 
 
@@ -308,8 +308,8 @@ namespace Assets.Scripts
             playButton.SetEnabled(value);
             muteToggle.SetEnabled(value);
             volumeSlider.SetEnabled(value);
-     
-            likeButton.SetEnabled(value);         
+
+            likeButton.SetEnabled(value);
         }
 
         private void InitUIElements()
@@ -360,7 +360,7 @@ namespace Assets.Scripts
                 subscriptionManager.CheckSubscriptionAndSetActivity();
             }
 
-            var selectedPlaylist = Match3.GameManager.GetSelectedPlaylist();
+            var selectedPlaylist = PlaylistService.GetSelectedPlaylist();
 
             if (selectedPlaylist == null)
             {
