@@ -725,12 +725,13 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
             IEnumerator ExecuteBeforeExit()
             {
-                yield return Styngr.StyngrSDK.StopPlaylistSession(Token, playlists.First().Id, GetStatisticsData(EndStreamReason.APPLICATION_CLOSED), () => Debug.Log("Playlist session stopped."), OnError);
+                yield return new WaitForEndOfFrame();
+                StopRadio(EndStreamReason.APPLICATION_CLOSED, true);
             }
 
             var quitAppHandler = new GameObject(nameof(QuitApplicationHandler)).AddComponent<QuitApplicationHandler>();
-            var ExecuteBeforeExitptr = ExecuteBeforeExit();
-            quitAppHandler.HandleApplicationQuit(ExecuteBeforeExitptr);
+            var ExecuteBeforeExitPtr = ExecuteBeforeExit();
+            quitAppHandler.HandleApplicationQuit(ExecuteBeforeExitPtr);
             return false;
         }
 
