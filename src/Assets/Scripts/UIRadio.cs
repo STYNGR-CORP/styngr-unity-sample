@@ -439,12 +439,22 @@ namespace Assets.Scripts
                 coverImage.color = defaultCoverColor;
                 trackName.text = AdInProgressMessage;
                 artistName.text = InfoAdMessage;
+
+                if (likeButton.gameObject.activeSelf)
+                {
+                    likeButton.gameObject.SetActive(false);
+                }
             }
             else
             {
                 StartCoroutine(radioPlayback.GetCoverImage(coverImage));
                 artistName.text = track.GetAsset().GetArtistsFormatted(", ");
                 trackName.text = track.GetAsset().Title;
+
+                if (!likeButton.gameObject.activeSelf)
+                {
+                    likeButton.gameObject.SetActive(true);
+                }
             }
         }
 
@@ -529,7 +539,7 @@ namespace Assets.Scripts
 
             radioTypeSelector.SetActive(false);
 
-            var selectedPlaylist = Match3.GameManager.GetSelectedPlaylist();
+            var selectedPlaylist = PlaylistService.GetSelectedPlaylist();
 
             if (selectedPlaylist == null)
             {
