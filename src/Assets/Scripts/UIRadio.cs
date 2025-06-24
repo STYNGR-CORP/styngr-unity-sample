@@ -14,7 +14,6 @@ using Packages.StyngrSDK.Runtime.Scripts.HelperClasses;
 using Packages.StyngrSDK.Runtime.Scripts.Store;
 using Assets.Scripts.SubscriptionsAndBundles;
 
-
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR)
 using VoltstroStudios.UnityWebBrowser.Core;
 #endif
@@ -106,8 +105,11 @@ namespace Assets.Scripts
         /// <summary>
         /// Skips a track in current playlist.
         /// </summary>
-        public void Skip() =>
+        public void Skip()
+        {
+            skipButton.interactable = false;
             radioPlayback.Skip();
+        }
 
         /// <summary>
         /// Performs like on a current track.
@@ -326,7 +328,7 @@ namespace Assets.Scripts
             {
                 popUpError.ShowImmediate(errorInfo.Errors);
             }
-            else if(infoDialog != null)
+            else if (infoDialog != null)
             {
                 infoDialog.ShowErrorMessage("Error Occured", errorInfo.Errors);
             }

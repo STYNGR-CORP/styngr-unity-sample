@@ -3,15 +3,34 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-namespace Assets.Scripts.Layouting
+namespace Assets.Scripts.Layouting.Labels
 {
     /// <summary>
     /// Does the transition from one color to another in prefedined time.
     /// </summary>
     internal class LabelHighlighter : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
     {
-
+        private bool isEnabled;
         private TMP_Text label;
+
+        protected bool IsEnabled
+        {
+            get =>
+                isEnabled;
+            set
+            {
+                isEnabled = value;
+                if (!isEnabled)
+                {
+                    StopAllCoroutines();
+                    label.color = disabledColor;
+                }
+                else
+                {
+                    label.color = defaultColor;
+                }
+            }
+        }
 
         [SerializeField]
         private Color defaultColor;
@@ -20,16 +39,29 @@ namespace Assets.Scripts.Layouting
         private Color highlightColor;
 
         [SerializeField]
+        private Color disabledColor;
+
+        [SerializeField]
         [Tooltip("The transition time from one color to another expressed in seconds.")]
         private float transitionTime;
 
         /// <inheritdoc/>
-        public void OnPointerEnter(PointerEventData eventData) =>
-            StartCoroutine(ColorTransitionAnimation(true));
+        public virtual void OnPointerEnter(PointerEventData eventData)
+        {
+            if (IsEnabled)
+            {
+                StartCoroutine(ColorTransitionAnimation(true));
+            }
+        }
 
         /// <inheritdoc/>
-        public void OnPointerExit(PointerEventData eventData) =>
-            StartCoroutine(ColorTransitionAnimation(false));
+        public virtual void OnPointerExit(PointerEventData eventData)
+        {
+            if (IsEnabled)
+            {
+                StartCoroutine(ColorTransitionAnimation(false));
+            }
+        }
 
         /// <summary>
         /// Does the color transition animation.

@@ -9,8 +9,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>10.0.20506</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <RootNamespace>
-    </RootNamespace>
+    <RootNamespace></RootNamespace>
     <ProjectGuid>{1DD021D6-8585-2557-19C4-C3C3BA8503AA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
@@ -65,6 +64,7 @@
     <Compile Include="Assets\Scripts\PlaylistUtils\PlaylistController.cs" />
     <Compile Include="Assets\Scripts\PurchaseConfirmationDialog.cs" />
     <Compile Include="Assets\Scripts\SubscriptionsAndBundles\RadioBundlesHandler.cs" />
+    <Compile Include="Assets\Scripts\Layouting\Labels\ButtonLabelHighlighter.cs" />
     <Compile Include="Assets\Scripts\PlaylistUtils\PlaylistService.cs" />
     <Compile Include="Assets\Scripts\ConfigurationLoader.cs" />
     <Compile Include="Assets\Scripts\GroupSession\DTO\Responses\ActiveGroupSessionDTO.cs" />
@@ -73,7 +73,6 @@
     <Compile Include="Assets\Scripts\GroupSession\GroupSessionSelector.cs" />
     <Compile Include="Assets\WebGLSupport\WebGLWindow\WebGLWindow.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\Editor\BonusGemEditor.cs" />
-    <Compile Include="Assets\Scripts\Layouting\LabelHighlighter.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\Gem.cs" />
     <Compile Include="Assets\Scripts\UIRadio.cs" />
     <Compile Include="Assets\Scripts\GroupSession\WebSocketDTO\WebSocketSessionOperationDTO.cs" />
@@ -88,6 +87,7 @@
     <Compile Include="Assets\GemHunterMatch\Scripts\SceneName.cs" />
     <Compile Include="Assets\GemHunterMatch\Scripts\VFXPoolSystem.cs" />
     <Compile Include="Assets\Scripts\GroupSession\GroupSessionUserTile.cs" />
+    <Compile Include="Assets\Scripts\Layouting\Labels\LabelHighlighter.cs" />
     <Compile Include="Assets\Scripts\PlaylistUtils\GUIPlaylistsSelector.cs" />
     <Compile Include="Assets\WebGLSupport\WebGLInput\Wrapper\WrappedTMPInputField.cs" />
     <Compile Include="Assets\Scripts\GroupSession\GroupSessionTile.cs" />

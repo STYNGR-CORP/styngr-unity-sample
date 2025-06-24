@@ -220,11 +220,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1496326814659312687, guid: 17925c4199db7174fba4ca603fa021ba, type: 3}
       propertyPath: m_AnchoredPosition.x
-      value: 0
+      value: -10
       objectReference: {fileID: 0}
     - target: {fileID: 1496326814659312687, guid: 17925c4199db7174fba4ca603fa021ba, type: 3}
       propertyPath: m_AnchoredPosition.y
-      value: -100
+      value: -110
       objectReference: {fileID: 0}
     - target: {fileID: 2726379783536322630, guid: 17925c4199db7174fba4ca603fa021ba, type: 3}
       propertyPath: m_IsActive
@@ -278,6 +278,18 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 3464476469883216183, guid: 17925c4199db7174fba4ca603fa021ba, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3464476469883216183, guid: 17925c4199db7174fba4ca603fa021ba, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3464476469883216183, guid: 17925c4199db7174fba4ca603fa021ba, type: 3}
+      propertyPath: m_AnchorMin.x
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3505174242505345131, guid: 17925c4199db7174fba4ca603fa021ba, type: 3}
       propertyPath: m_IsActive
       value: 0
@@ -293,6 +305,10 @@ PrefabInstance:
     - target: {fileID: 4868879625597847332, guid: 17925c4199db7174fba4ca603fa021ba, type: 3}
       propertyPath: m_Name
       value: StripeInternetRadio
+      objectReference: {fileID: 0}
+    - target: {fileID: 4868879625597847332, guid: 17925c4199db7174fba4ca603fa021ba, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4868879625597847332, guid: 17925c4199db7174fba4ca603fa021ba, type: 3}
       propertyPath: m_TagString
