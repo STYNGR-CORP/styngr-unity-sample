@@ -4,6 +4,8 @@ using Styngr.Enums;
 using System;
 using UnityEngine;
 using UnityEngine.UI;
+using Styngr.DTO.Request;
+
 
 #if UNITY_WEBGL
 using Newtonsoft.Json;
@@ -61,7 +63,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         private static readonly object _locker = new();
 
         private PlaybackState playbackState = PlaybackState.NotInitialized;
-        private PlaybackStatisticBase statisticData;
+        private Statistics statisticData;
 
         private StreamType currentStreamType = StreamType.HTTP;
         public Button like;
@@ -124,7 +126,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
 
                 default:
                     currentTrackStartTime = DateTime.Now;
-                    Play(currentTrack.TrackUrl, GetSourceType());
+                    Play(currentTrack.GetAsset().StreamUrl, GetSourceType());
                     playbackState = PlaybackState.Playing;
                     PlaybackChanged.Invoke(this, playbackState);
                     break;
@@ -145,8 +147,8 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
                 currentStreamType = streamType;
                 StartCoroutine(
                         SkipTrack(
-                            GetSkipTrackCallback,
-                            LogErrorCallback, GetStatisticsData(EndStreamReason.Skip)));
+                            GetTrackCallback,
+                            LogErrorCallback, GetStatisticsData(EndStreamReason.SKIP)));
             }
         }
 
@@ -161,7 +163,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
                 StartCoroutine(
                         Styngr.StyngrSDK.GetLike(
                             Token,
-                            currentTrack.GetId(),
+                            currentTrack.GetAsset().GetId(),
                             onSuccess: GetLikeTrackCallback,
                             onFail: LogErrorCallback));
             }
@@ -179,7 +181,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
                 GatherStatisticsData((int)endStreamReason);
                 Pause();
 
-                StartCoroutine(radioContentStrategy.StopPlaylist(statisticData, LogErrorCallback));
+                Styngr.StyngrSDK.StopPlaylistSession(Token, playlists.First().Id, statisticData,() => Debug.Log("Playlist session stopped."), LogErrorCallback);
 
                 if (shouldDispose)
                 {
@@ -221,15 +223,15 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             NextTrackProgressChanged?.Invoke(this, OperationProgress.Active);
             Debug.Log("Getting next song, previous finished");
             // Gather and send statistics data
-            GatherStatisticsData((int)EndStreamReason.Completed);
+            GatherStatisticsData((int)EndStreamReason.COMPLETED);
 
             if (playlists != null && playlists.Count > 0)
             {
                 currentStreamType = streamType;
                 StartCoroutine(
                     GetTrack(
-                        GetSkipTrackCallback,
-                        LogErrorCallback, GetStatisticsData(EndStreamReason.Completed)));
+                        GetTrackCallback,
+                        LogErrorCallback, GetStatisticsData(EndStreamReason.COMPLETED)));
             }
         }
 
@@ -246,63 +248,43 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
             var parameters = JsonConvert.DeserializeObject<StatisticsParams>(jsParams);
             Debug.Log($"[{nameof(WebGLRadio)}]: Parameters - reason: {parameters.reason}, duration: {parameters.duration}, isMuted: {parameters.isMuted}, isAutoplay: {parameters.isAutoplay}");
 
-            if (RadioType == MusicType.LICENSED)
+            var deviceInformation =
+                Styngr.StyngrSDK.GetDeviceInformation((errorInfo) =>
+                Debug.LogError($"[{nameof(RadioPlayback)}] error occured while fetching device information. Error message: {errorInfo.Errors}."));
+            int? previousTrackId = previousTrack != null ? int.Parse(previousTrack.GetAsset().GetId()) : null;
+
+            statisticData = currentTrack.GetTrackType() switch
             {
-                    if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
-                    {
-                        statisticData = new LicensedPlaybackStatistic(
-                            currentTrack,
-                            playlists.FirstOrDefault(),
-                            currentTrackStartTime,
-                            parameters.duration,
-                            UseType.streaming,
-                            autoplay: parameters.isAutoplay,
-                            mute: parameters.isMuted,
-                            endStreamReason: parameters.reason,
-                            appState: AppState.Open,
-                            appStateStart: AppStateStart.Active);
-                    }
-                    else
-                    {
-                        statisticData = new LicensedAdPlaybackStatistic(
-                            currentTrack,
-                            playlists.FirstOrDefault(),
-                            currentTrackStartTime,
-                            parameters.duration,
-                            UseType.ad,
-                            autoplay: parameters.isAutoplay,
-                            mute: parameters.isMuted,
-                            endStreamReason: EndAdStreamReason.EndOfSession,
-                            appState: AppState.Open,
-                            appStateStart: AppStateStart.Active,
-                            adId: (Guid)(currentTrack as TrackInfo).AdId);
-                    }
-            }
-            else
-            {
-                if (currentTrack.TrackTypeContent == TrackType.MUSICAL)
-                {
-                    statisticData = new RoyaltyFreePlaybackStatistic(
-                        parameters.duration,
+                TrackType.MUSICAL or TrackType.MUSICAL_RF =>
+                    new TrackStatistics(
+                        UseType.STREAMING,
+                        currentTrackStartTime,
+                        new(parameters.duration),
                         parameters.reason,
-                        (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
-                        playlists.FirstOrDefault());
-                }
-                else
-                {
-                    statisticData = new RoyaltyFreeAdPlaybackStatistic(
-                        new RoyaltyFreePlaybackStatistic(
-                            parameters.duration,
-                            parameters.reason,
-                            (currentTrack as RoyaltyFreeTrackInfo).UsageReportId,
-                            playlists.FirstOrDefault()),
-                        UseType.ad,
-                        (currentTrack as RoyaltyFreeTrackInfo).AdId);
-                }
-            }
+                        int.Parse(currentTrack.GetAsset().GetId()),
+                        previousTrackId,
+                        playlists.First().Id,
+                        autoplay: parameters.isAutoplay,
+                        isMuted: parameters.isMuted,
+                        Styngr.StyngrSDK.GetOffset(),
+                        deviceInformation.DeviceType,
+                        deviceInformation.OsVersion,
+                        deviceInformation.OsType,
+                        deviceInformation.DeviceMake,
+                        deviceInformation.DeviceModel),
+                TrackType.COMMERCIAL =>
+                    new AdStatistics(
+                        Guid.Parse(currentTrack.GetAsset().GetId()),
+                        UseType.AD_STREAMING,
+                        currentTrackStartTime,
+                        new(parameters.duration),
+                        parameters.reason),
+                _ =>
+                    throw new NotSupportedException($"[{nameof(RadioPlayback)}] Track type {currentTrack.GetTrackType()} not supported."),
+            };
         }
 
-        protected override PlaybackStatisticBase GetStatisticsData(EndStreamReason endStreamReason)
+        protected override Statistics GetStatisticsData(EndStreamReason endStreamReason)
         {
             GatherStatisticsData((int)endStreamReason);
             return statisticData;
@@ -317,27 +299,27 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// <summary>
         /// When skip is initiated, successful response is forwarded to this method.
         /// </summary>
-        /// <param name="trackInfoBase">Useful information about the track.</param>
-        private void GetSkipTrackCallback(TrackInfoBase trackInfoBase)
+        /// <param name="trackInfo">Useful information about the track.</param>
+        private void GetTrackCallback(TrackInfo trackInfo)
         {
             // Lock the data
             lock (_locker)
             {
-                IsCommercialInProgress = trackInfoBase.TrackTypeContent == TrackType.COMMERCIAL;
+                IsCommercialInProgress = trackInfo.GetTrackType() == TrackType.COMMERCIAL;
                 RadioInteractabilityChanged.Invoke(this, true);
 
                 NextTrackProgressChanged?.Invoke(this, OperationProgress.Finished);
                 // Save the link to the track
-                Debug.Log($"[{nameof(WebGLRadio)}] Track url: {trackInfoBase.TrackUrl}");
+                Debug.Log($"[{nameof(WebGLRadio)}] Track url: {trackInfo.GetAsset().StreamUrl}");
 
                 // Save start time and start track playback
                 currentTrackStartTime = DateTime.Now;
-                Play(trackInfoBase.TrackUrl, GetSourceType());
+                Play(trackInfo.GetAsset().StreamUrl, GetSourceType());
                 Resume();
                 
                 playbackState = PlaybackState.Playing;
                 PlaybackChanged.Invoke(this, playbackState);
-                InitRadioWithData(trackInfoBase);
+                InitRadioWithData(trackInfo);
             }
         }
 
@@ -347,11 +329,11 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// <param name="likeInfo">Information which says if the track is liked.</param>
         private void GetLikeTrackCallback(LikeInfo likeInfo)
         {
-            lock (_locker)
+            /*lock (_locker)
             {
                 currentTrack.IsLiked = likeInfo.IsLiked;
                 LikeChanged.Invoke(this, currentTrack.IsLiked);
-            }
+            }*/
         }
 
         /// <summary>
@@ -405,40 +387,22 @@ namespace Packages.StyngrSDK.Runtime.Scripts.HelperClasses
         /// </summary>
         private void RefreshSession()
         {
-            StartCoroutine(
-                Styngr.StyngrSDK.GetTrack(
-                    Token,
-                    playlists.First().GetId(),
-                    startNewSession: true,
-                    onSuccess: GetSkipTrackCallback,
-                    onFail: LogErrorCallback));
-        }
+            var playlistId = playlists.First().Id;
 
-        /// <summary>
-        /// Sends statisticks to the server.
-        /// </summary>
-        /// <param name="endStreamReason">End of the stream reason.</param>
-        /// <param name="duration">Duration the track was played.</param>
-        /// <param name="isMuted">Indication if track was muted.</param>
-        /// <param name="isAutoplay">Indication if autoplay is turned on for the playlist.</param>
-        private void SendStatisticDefault(EndStreamReason endStreamReason, float duration, bool isMuted = false, bool isAutoplay = false)
-        {
+            // Stops the playlist.
             StartCoroutine(
-                Styngr.StyngrSDK.SendPlaybackStatistic(
+                Styngr.StyngrSDK.StopPlaylistSession(
                     Token,
-                    currentTrack,
-                    playlists[0],
-                    currentTrackStartTime,
-                    new Duration(duration),
-                    IsCommercialInProgress ? UseType.ad : UseType.streaming,
-                    isMuted,
-                    isAutoplay,
-                    endStreamReason,
-                    AppState.Open,
-                    AppStateStart.Active,
-                    playbackType,
-                    () => Debug.Log($"[{nameof(WebGLRadio)}]: Statistics sent successfully."),
-                    (errorInfo) => OnErrorOccured.Invoke(this, errorInfo)));
+                    playlistId,
+                    GetStatisticsData(EndStreamReason.END_SESSION),
+                    () => StartCoroutine(StartPlaylistSession()),
+                    LogErrorCallback));
+
+            // Starts a new session.
+            IEnumerator StartPlaylistSession()
+            {
+                yield return Styngr.StyngrSDK.StartPlaylistSession(Token, playlistId, GetTrackCallback, LogErrorCallback);
+            }
         }
 
         private void StyngrSDK_OnLogMessage(object sender, string e)

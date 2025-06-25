@@ -52,7 +52,7 @@ namespace Assets.Scripts.GroupSession.WebSocketDTO
 #pragma warning restore CS0649 // Field 'WebSocketSessionOperationDTO.playlist' is never assigned to, and will always have its default value null
 
 #pragma warning restore CS0649 // Field 'WebSocketSessionOperationDTO.currentTrackId' is never assigned to, and will always have its default value null
-        public int currentTrackId;
+        public string currentTrackId;
 #pragma warning restore CS0649 // Field 'WebSocketSessionOperationDTO.currentTrackId' is never assigned to, and will always have its default value null
     }
 }

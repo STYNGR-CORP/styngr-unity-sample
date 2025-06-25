@@ -12,9 +12,7 @@ using TMPro;
 using Assets.Scripts.PlaylistUtils;
 using Packages.StyngrSDK.Runtime.Scripts.HelperClasses;
 using Packages.StyngrSDK.Runtime.Scripts.Store;
-using Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies;
 using Assets.Scripts.SubscriptionsAndBundles;
-
 
 #if (UNITY_STANDALONE_WIN || UNITY_EDITOR)
 using VoltstroStudios.UnityWebBrowser.Core;
@@ -84,6 +82,7 @@ namespace Assets.Scripts
         [SerializeField] private PopUp popUpError;
         [SerializeField] private PopUp popUpSuccess;
         [SerializeField] private InfoPopup infoPopup;
+        [SerializeField] private InfoDialog infoDialog;
         [SerializeField] private SubscriptionManager subscriptionManager;
         [SerializeField] private BundlesAndSubscriptionsController bundlesAndSubscriptionsController;
         [SerializeField] private GameObject browser;
@@ -106,8 +105,11 @@ namespace Assets.Scripts
         /// <summary>
         /// Skips a track in current playlist.
         /// </summary>
-        public void Skip() =>
+        public void Skip()
+        {
+            skipButton.interactable = false;
             radioPlayback.Skip();
+        }
 
         /// <summary>
         /// Performs like on a current track.
@@ -164,7 +166,7 @@ namespace Assets.Scripts
         {
             if (radioPlayback != null && radioPlayback.GetPlaybackState().Equals(PlaybackState.Playing))
             {
-                radioPlayback.StopRadio(EndStreamReason.EndSession, true);
+                radioPlayback.StopRadio(EndStreamReason.END_SESSION, true);
             }
         }
 
@@ -226,46 +228,16 @@ namespace Assets.Scripts
             CreateRadioScript();
 
             radioPlayback.RadioType = MusicType.LICENSED;
-            radioPlayback.SetStrategy(new RoyaltyContentStrategy());
 
             StartCoroutine(radioPlayback.InitWithRandomPlaylist(resetSessionId));
         }
 
         /// <summary>
-        /// Initializes the radio as royalty free type.
+        /// Initializes the radio with the selected playlist.
         /// </summary>
-        public void InitRoyaltyFreeRadio()
+        public void InitRadio(Playlist selectedPlaylist)
         {
             CreateRadioScript();
-
-            radioPlayback.RadioType = MusicType.ROYALTY_FREE;
-            radioPlayback.SetStrategy(new RoyaltyFreeContentStrategy());
-
-            StartCoroutine(radioPlaylistController.SelectInitialPlaylist());          
-        }
-
-        /// <summary>
-        /// Initializes the radio as royalty type with selected playlist.
-        /// </summary>
-        public void InitLicensedRadio(Playlist selectedPlaylist)
-        {
-            CreateRadioScript();
-
-            radioPlayback.RadioType = MusicType.LICENSED;
-            radioPlayback.SetStrategy(new RoyaltyContentStrategy());
-
-            StartCoroutine(radioPlayback.InitWithPlaylist(selectedPlaylist, PlaybackType.Radio, true));
-        }
-
-        /// <summary>
-        /// Initializes the radio as royalty free type with selected playlist.
-        /// </summary>
-        public void InitRoyaltyFreeRadio(Playlist selectedPlaylist)
-        {
-            CreateRadioScript();
-
-            radioPlayback.RadioType = MusicType.ROYALTY_FREE;
-            radioPlayback.SetStrategy(new RoyaltyFreeContentStrategy());
 
             StartCoroutine(radioPlayback.InitWithPlaylist(selectedPlaylist, PlaybackType.Radio, true));
         }
@@ -330,7 +302,7 @@ namespace Assets.Scripts
         /// </summary>
         public void ChangeRadioType()
         {
-            radioPlayback.StopRadio(EndStreamReason.PlaylistChange, shouldDispose: true);
+            radioPlayback.StopRadio(EndStreamReason.PLAYLIST_CHANGE, shouldDispose: true);
 
             UnregisterEvents();
             coverImage.sprite = defaultCoverImage;
@@ -340,7 +312,7 @@ namespace Assets.Scripts
 
         private void OnPlaylistChanged(object sender, Playlist playlist)
         {
-            radioPlayback.StopRadio(EndStreamReason.PlaylistChange, shouldDispose: true);
+            radioPlayback.StopRadio(EndStreamReason.PLAYLIST_CHANGE, shouldDispose: true);
 
             playButton.GetComponentInChildren<Image>().sprite = playImage;
             StartCoroutine(radioPlayback.InitWithPlaylist(playlist, PlaybackType.Radio, enableAutoplay: true));
@@ -355,6 +327,10 @@ namespace Assets.Scripts
             if (popUpError != null)
             {
                 popUpError.ShowImmediate(errorInfo.Errors);
+            }
+            else if (infoDialog != null)
+            {
+                infoDialog.ShowErrorMessage("Error Occured", errorInfo.Errors);
             }
         }
 
@@ -457,9 +433,9 @@ namespace Assets.Scripts
         private void OnLikeChanged(object sender, bool isLiked) =>
             likeButton.GetComponentInChildren<Image>().sprite = isLiked ? likedImage : unlikedImage;
 
-        private void OnTrackReady(object sender, TrackInfoBase track)
+        private void OnTrackReady(object sender, TrackInfo track)
         {
-            if (track.TrackTypeContent == TrackType.COMMERCIAL)
+            if (track.GetTrackType() == TrackType.COMMERCIAL)
             {
                 coverImage.sprite = defaultCoverImage;
                 coverImage.color = defaultCoverColor;
@@ -474,8 +450,8 @@ namespace Assets.Scripts
             else
             {
                 StartCoroutine(radioPlayback.GetCoverImage(coverImage));
-                artistName.text = string.Join(", ", track.ArtistNamesFormatted);
-                trackName.text = track.TrackTitle;
+                artistName.text = track.GetAsset().GetArtistsFormatted(", ");
+                trackName.text = track.GetAsset().Title;
 
                 if (!likeButton.gameObject.activeSelf)
                 {
@@ -571,13 +547,9 @@ namespace Assets.Scripts
             {
                 InitLicensedRadio(true);
             }
-            else if (selectedPlaylist.Type == MusicType.LICENSED)
-            {
-                InitLicensedRadio(selectedPlaylist);
-            }
             else
             {
-                InitRoyaltyFreeRadio(selectedPlaylist);
+                InitRadio(selectedPlaylist);
             }
         }
 
@@ -590,7 +562,7 @@ namespace Assets.Scripts
         {
             if (sendStatisticsOnDestroy && radioPlayback != null && radioPlayback.GetPlaybackState().Equals(PlaybackState.Playing))
             {
-                radioPlayback.StopRadio(EndStreamReason.ApplicationClosed, true);
+                radioPlayback.StopRadio(EndStreamReason.APPLICATION_CLOSED, true);
             }
 
             StopAllCoroutines();

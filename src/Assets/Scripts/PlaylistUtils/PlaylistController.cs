@@ -81,14 +81,7 @@ namespace Assets.Scripts.PlaylistUtils
         /// <returns><see cref="IEnumerator"/> so that the Unity coroutine knows where to continue exectuion.</returns>
         public virtual IEnumerator SelectInitialPlaylist()
         {
-            if (MusicType == MusicType.LICENSED)
-            {
-                yield return ChangeLicensedPlaylist();
-            }
-            else
-            {
-                yield return ChangeRoyaltyFreePlaylist();
-            }
+            yield return ChangePlaylist();
         }
 
         /// <summary>
@@ -101,9 +94,6 @@ namespace Assets.Scripts.PlaylistUtils
             var allPlaylists = new List<Playlist>();
 
             yield return StyngrSDK.GetPlaylists(Token, playlistInfo => allPlaylists = allPlaylists.Union(playlistInfo.Playlists).ToList(),
-                errorInfo => errorInfos.Add(errorInfo));
-
-            yield return StyngrSDK.GetRoyaltyFreePlaylists(Token, playlistInfo => allPlaylists = allPlaylists.Union(playlistInfo.Playlists).ToList(),
                 errorInfo => errorInfos.Add(errorInfo));
 
             if (errorInfos.Count == 2)
@@ -126,14 +116,7 @@ namespace Assets.Scripts.PlaylistUtils
         public virtual IEnumerator ChangePlaylist(Playlist activePlaylist)
         {
             currentlyActivePlaylist = activePlaylist;
-            if (MusicType == MusicType.LICENSED)
-            {
-                yield return ChangeLicensedPlaylist();
-            }
-            else
-            {
-                yield return ChangeRoyaltyFreePlaylist();
-            }
+            yield return ChangePlaylist();
         }
 
         /// <summary>
@@ -148,7 +131,7 @@ namespace Assets.Scripts.PlaylistUtils
         /// to initiate the playlist selector construction.
         /// </summary>
         /// <returns><see cref="IEnumerator"/> so that the unity coroutine knows where to continue the execution.</returns>
-        public virtual IEnumerator ChangeLicensedPlaylist()
+        public virtual IEnumerator ChangePlaylist()
         {
             yield return StyngrSDK.GetPlaylists(Token, OnPlaylistsReceived, OnFailedResponse);
         }
@@ -180,18 +163,8 @@ namespace Assets.Scripts.PlaylistUtils
             }
             else
             {
-                yield return ChangeLicensedPlaylist();
+                yield return ChangePlaylist();
             }
-        }
-
-        /// <summary>
-        /// Gets the royalty free playlists and notifiy the <see cref="PlaylistsSelector"/>
-        /// to initiate the playlist selector construction.
-        /// </summary>
-        /// <returns><see cref="IEnumerator"/> so that the unity coroutine knows where to continue the execution.</returns>
-        public virtual IEnumerator ChangeRoyaltyFreePlaylist()
-        {
-            yield return StyngrSDK.GetRoyaltyFreePlaylists(Token, OnPlaylistsReceived, OnFailedResponse);
         }
 
         /// <summary>

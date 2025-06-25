@@ -15,29 +15,9 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics
         public int PlaytimeInSeconds => (int)duration;
 
         /// <summary>
-        /// Gets the status of the track.
+        /// Gets or sets styngr track identifier - use this value for statistics reporting.
         /// </summary>
-        public RoyaltyFreeTrackStatus TrackStatus
-        {
-            get
-            {
-                switch (endStreamReason)
-                {
-                    case EndStreamReason.Next:
-                    case EndStreamReason.Completed:
-                        return RoyaltyFreeTrackStatus.TRACK_COMPLETE;
-                    case EndStreamReason.Skip:
-                        return RoyaltyFreeTrackStatus.TRACK_SKIPPED;
-                    default:
-                        return RoyaltyFreeTrackStatus.TRACK_STOPPED;
-                }
-            }
-        }
-
-        /// <summary>
-        /// Gets or sets the usage report id.
-        /// </summary>
-        public Guid UsageReportId { get; set; }
+        public int StyngrId { get; set; }
 
         /// <summary>
         /// Creates an instance of the <see cref="RoyaltyFreePlaybackStatistic"/> class.
@@ -46,11 +26,11 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics
         /// <param name="endStreamReason">The reason of the end of the stream.</param>
         /// <param name="usageReportId">The usage report identifier.</param>
         /// <param name="playlist">The current playlist.</param>
-        public RoyaltyFreePlaybackStatistic(float duration, EndStreamReason endStreamReason, Guid usageReportId, IId playlist)
+        public RoyaltyFreePlaybackStatistic(int styngrId, float duration, EndStreamReason endStreamReason, IId playlist)
         {
             this.duration = duration;
             this.endStreamReason = endStreamReason;
-            UsageReportId = usageReportId;
+            StyngrId = styngrId;
             Playlist = playlist;
         }
 
@@ -58,7 +38,7 @@ namespace Packages.StyngrSDK.Runtime.Scripts.Radio.Statistics
         {
             duration = other.duration;
             endStreamReason = other.endStreamReason;
-            UsageReportId = other.UsageReportId;
+            StyngrId = other.StyngrId;
             Playlist = other.Playlist;
         }
     }

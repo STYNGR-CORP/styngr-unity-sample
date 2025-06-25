@@ -5,10 +5,8 @@ using Assets.Scripts.GroupSession.WebSocketDTO;
 using Assets.Scripts.PlaylistUtils;
 using Assets.Scripts.SubscriptionsAndBundles;
 using Assets.Utils.HelperClasses;
-using CSCore.Codecs;
 using Newtonsoft.Json;
 using Packages.StyngrSDK.Runtime.Scripts.HelperClasses;
-using Packages.StyngrSDK.Runtime.Scripts.Radio.Strategies;
 using Packages.StyngrSDK.Runtime.Scripts.Store.Utility;
 using Packages.StyngrSDK.Runtime.Scripts.Store.Utility.Enums;
 using Styngr;
@@ -114,7 +112,7 @@ namespace Assets.Scripts
         /// </summary>
         public void LeaveGroupSession()
         {
-            radioPlayback.StopRadio(EndStreamReason.GroupSessionLeft, true);
+            radioPlayback.StopRadio(EndStreamReason.GROUP_SESSION_LEFT, true);
             if (isOwner)
             {
                 StartCoroutine(LeaveGroupAsOwner());
@@ -226,7 +224,7 @@ namespace Assets.Scripts
         private void OnPlaylistChanged(object sender, Playlist playlist)
         {
             activePlaylist = playlist;
-            radioPlayback.StopRadio(EndStreamReason.PlaylistChange, true);
+            radioPlayback.StopRadio(EndStreamReason.PLAYLIST_CHANGE, true);
             radioPlayback.RemoveRadioSuspension();
             SetRadioPlayPauseButton(radioPlayback.GetPlaybackState());
             StartCoroutine(radioPlayback.InitWithPlaylistAndNotify(activePlaylist, PlaybackType.GroupSession, true, OnInitializationFinished));
@@ -334,7 +332,7 @@ namespace Assets.Scripts
             {
                 groupSessionInfo = groupTrackInfo.Item1;
                 var activePlaylistId = groupSessionInfo.LinkedPLaylistSessions.Find(x => x.PlaylistSessionId == groupSessionInfo.CurrentPlaylistSessionId).PlaylistId;
-                activePlaylist = playlists.Playlists.Find(x => x.Id == activePlaylistId.ToString());
+                activePlaylist = playlists.Playlists.Find(x => x.Id == activePlaylistId);
                 StartCoroutine(JoinGroupSessionRadioInit(groupTrackInfo.Item2));
             }
 
@@ -387,9 +385,9 @@ namespace Assets.Scripts
             radioPlayback.NextTrackProgressChanged += OnNextTrackProgressChanged;
         }
 
-        private void OnTrackReady(object sender, TrackInfoBase trackinfoBase)
+        private void OnTrackReady(object sender, TrackInfo trackinfo)
         {
-            if (trackinfoBase.TrackTypeContent == TrackType.COMMERCIAL)
+            if (trackinfo.GetTrackType() == TrackType.COMMERCIAL)
             {
                 coverImage.sprite = defaultCoverImage;
                 coverImage.color = defaultCoverColor;
@@ -399,8 +397,8 @@ namespace Assets.Scripts
             else
             {
                 StartCoroutine(radioPlayback.GetCoverImage(coverImage));
-                trackName.text = trackinfoBase.TrackTitle;
-                artistName.text = trackinfoBase.ArtistNamesFormatted;
+                trackName.text = trackinfo.GetAsset().Title;
+                artistName.text = trackinfo.GetAsset().GetArtistsFormatted(", ");
             }
 
             if (loadingScreen.activeSelf)
@@ -492,7 +490,7 @@ namespace Assets.Scripts
             radioPlayback.RemoveRadioSuspension();
             if (radioPlayback.GetPlaybackState().Equals(PlaybackState.Playing))
             {
-                radioPlayback.StopRadio(EndStreamReason.GroupSessionLeft, true);
+                radioPlayback.StopRadio(EndStreamReason.GROUP_SESSION_LEFT, true);
             }
 
             playPauseImage.sprite = playSprite;
@@ -660,7 +658,7 @@ namespace Assets.Scripts
         /// <returns><see cref="IEnumerator"/> so that Unity can handle it through coroutines.</returns>
         private IEnumerator ChangeThePlaylist(Playlist playlist)
         {
-            radioPlayback.StopRadio(EndStreamReason.PlaylistChange, true);
+            radioPlayback.StopRadio(EndStreamReason.PLAYLIST_CHANGE, true);
 
             // Initializes the radio with basic data.
             // PlayPause will trigger wasapi player initialization. This is required so that stream positioning can be executed.
@@ -831,7 +829,7 @@ namespace Assets.Scripts
         {
             if (radioPlayback != null)
             {
-                radioPlayback.StopRadio(EndStreamReason.ApplicationClosed, false);
+                radioPlayback.StopRadio(EndStreamReason.APPLICATION_CLOSED, false);
             }
 
             if (IsInSession)
@@ -1083,7 +1081,6 @@ namespace Assets.Scripts
                 radioPlayback.InitSubscriptionComponents(subscriptionManager, subscribeButton, GroupSessionSubscribeName);
             }
 
-            radioPlayback.SetStrategy(new GroupSessionContentStrategy());
             RegisterEvents();
 
             SetSessionUIActivity(false);

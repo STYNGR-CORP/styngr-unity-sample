@@ -19,7 +19,7 @@ public class PlaylistEntryController
     }
 
     /// <summary>
-    /// Constructs a entry.
+    /// Constructs an entry.
     /// </summary>
     /// <param name="playlist">Information about the playlist.</param>
     public void SetPlaylist(Playlist playlist)
