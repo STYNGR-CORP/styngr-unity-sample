@@ -51,8 +51,8 @@ namespace Assets.Scripts
         [Header("-Sprites, Images and Colors-")]
         [SerializeField] private Sprite playImage;
         [SerializeField] private Sprite pauseImage;
-        [SerializeField] private Sprite likedImage;
-        [SerializeField] private Sprite unlikedImage;
+        //[SerializeField] private Sprite likedImage;
+        //[SerializeField] private Sprite unlikedImage;
         [SerializeField] private Sprite defaultCoverImage;
         [SerializeField] private Sprite mutedImage;
         [SerializeField] private Sprite unmutedImage;
@@ -64,7 +64,7 @@ namespace Assets.Scripts
         [SerializeField] private Button skipButton;
         [SerializeField] private Button playButton;
         [SerializeField] private Toggle muteToggle;
-        [SerializeField] private Button likeButton;
+        //[SerializeField] private Button likeButton;
         [SerializeField] private Button spotifyButton;
         [SerializeField] private Button subscribeButton;
         [SerializeField] private Button spotifyLikeButton;
@@ -375,7 +375,7 @@ namespace Assets.Scripts
         {
             SetRadioUIInteractableImmediate(value);
             skipButton.interactable = !radioPlayback.IsCommercialInProgress;
-            likeButton.interactable = !radioPlayback.IsCommercialInProgress;
+            //likeButton.interactable = !radioPlayback.IsCommercialInProgress;
         }
 
         private void SetRadioUIInteractableImmediate(bool value)
@@ -390,7 +390,7 @@ namespace Assets.Scripts
                 streamType.interactable = value;
             }
 
-            likeButton.interactable = value;
+            //likeButton.interactable = value;
             spotifyLikeButton.interactable = value;
         }
 
@@ -430,8 +430,9 @@ namespace Assets.Scripts
             }
         }
 
-        private void OnLikeChanged(object sender, bool isLiked) =>
-            likeButton.GetComponentInChildren<Image>().sprite = isLiked ? likedImage : unlikedImage;
+        // TODO: Uncomment this when backend add support for like button in the Unified API.
+        //private void OnLikeChanged(object sender, bool isLiked) =>
+        //    likeButton.GetComponentInChildren<Image>().sprite = isLiked ? likedImage : unlikedImage;
 
         private void OnTrackReady(object sender, TrackInfo track)
         {
@@ -442,10 +443,10 @@ namespace Assets.Scripts
                 trackName.text = AdInProgressMessage;
                 artistName.text = InfoAdMessage;
 
-                if (likeButton.gameObject.activeSelf)
-                {
-                    likeButton.gameObject.SetActive(false);
-                }
+                //if (likeButton.gameObject.activeSelf)
+                //{
+                //    likeButton.gameObject.SetActive(false);
+                //}
             }
             else
             {
@@ -453,10 +454,10 @@ namespace Assets.Scripts
                 artistName.text = track.GetAsset().GetArtistsFormatted(", ");
                 trackName.text = track.GetAsset().Title;
 
-                if (!likeButton.gameObject.activeSelf)
-                {
-                    likeButton.gameObject.SetActive(true);
-                }
+                //if (!likeButton.gameObject.activeSelf)
+                //{
+                //    likeButton.gameObject.SetActive(true);
+                //}
             }
         }
 
@@ -465,7 +466,7 @@ namespace Assets.Scripts
         {
             UnregisterEvents();
             radioPlayback.PlaybackChanged += OnPlaybackChanged;
-            radioPlayback.LikeChanged += OnLikeChanged;
+            //radioPlayback.LikeChanged += OnLikeChanged;
             radioPlayback.SpotifyTokenObtained += OnSpotifyTokenObtained;
             radioPlayback.TrackAddedToSpotify += OnTrackAddedToSpotify;
             radioPlayback.TrackReady += OnTrackReady;
@@ -488,7 +489,7 @@ namespace Assets.Scripts
         private void UnregisterEvents()
         {
             radioPlayback.PlaybackChanged -= OnPlaybackChanged;
-            radioPlayback.LikeChanged -= OnLikeChanged;
+            //radioPlayback.LikeChanged -= OnLikeChanged;
             radioPlayback.SpotifyTokenObtained -= OnSpotifyTokenObtained;
             radioPlayback.TrackAddedToSpotify -= OnTrackAddedToSpotify;
             radioPlayback.TrackReady -= OnTrackReady;
