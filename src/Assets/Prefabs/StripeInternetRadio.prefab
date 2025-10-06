@@ -501,7 +501,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1004720275391117184
 RectTransform:
   m_ObjectHideFlags: 0
@@ -2228,8 +2228,6 @@ MonoBehaviour:
   sendStatisticsOnDestroy: 1
   playImage: {fileID: 21300000, guid: 7fd7555af2129c743a405d6a2f2419f5, type: 3}
   pauseImage: {fileID: 21300000, guid: cdb164f546abc6a45bd530bc67bc7cdb, type: 3}
-  likedImage: {fileID: 21300000, guid: 90d44eab3b8c5454fb7075299e11232a, type: 3}
-  unlikedImage: {fileID: 21300000, guid: a1cc842623922e3479ed4319ea5951aa, type: 3}
   defaultCoverImage: {fileID: 21300000, guid: 0c939f8297bc3cd4b8c0850c43757417, type: 3}
   mutedImage: {fileID: 21300000, guid: e02151635f9efeb4e820bf22716a97fe, type: 3}
   unmutedImage: {fileID: 21300000, guid: c926ba6b0f902bd47bdcd54ac8314c39, type: 3}
@@ -2239,7 +2237,6 @@ MonoBehaviour:
   skipButton: {fileID: 8144056894919942598}
   playButton: {fileID: 6557721138182529735}
   muteToggle: {fileID: 6993264840461817153}
-  likeButton: {fileID: 5613527759461451851}
   spotifyButton: {fileID: 0}
   subscribeButton: {fileID: 7886754032570992920}
   spotifyLikeButton: {fileID: 7634636065653486337}
@@ -4122,7 +4119,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 181956371388064506, guid: f106f8afc97d5114390d4187b1082ff8, type: 3}
       propertyPath: m_fontSize
-      value: 46.4
+      value: 48.95
       objectReference: {fileID: 0}
     - target: {fileID: 5338543300417272021, guid: f106f8afc97d5114390d4187b1082ff8, type: 3}
       propertyPath: m_Name
@@ -4218,7 +4215,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7794953344753618943, guid: f106f8afc97d5114390d4187b1082ff8, type: 3}
       propertyPath: m_fontSize
-      value: 30
+      value: 31.05
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
