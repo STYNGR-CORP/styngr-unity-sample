@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/UI%20Toolkit/PlaylistEntry.uss?fileID=7433441132597879392&amp;guid=e958c6a5a08345c47a6fd064257cbf5f&amp;type=3#PlaylistEntry" />
+    <ui:VisualElement name="list-entry">
+        <ui:Label text="Label" display-tooltip-when-elided="true" name="playlist-name"  />
+    </ui:VisualElement>
+</ui:UXML>

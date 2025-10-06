@@ -1,0 +1,76 @@
+.LabelStyle {
+    -unity-font: url("project://database/Assets/GemHunterMatch/Fonts/CurseCasual/Curse%20Casual.ttf?fileID=12800000&guid=31797353ab4fc7043a0f62eacf5ea3a9&type=3#Curse Casual");
+    color: rgb(255, 255, 255);
+}
+
+.button {
+    background-image: url("project://database/Assets/Images/Radio/Play.png?fileID=21300000&guid=7fd7555af2129c743a405d6a2f2419f5&type=3#Play");
+    background-color: rgba(0, 0, 0, 0);
+    font-size: 14px;
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    width: 15%;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    transition-duration: 0.2s;
+}
+
+.toggle {
+    border-top-width: 0;
+    border-right-width: 0;
+    border-bottom-width: 0;
+    border-left-width: 0;
+    background-image: url("project://database/Assets/Images/Radio/unmuted.png?fileID=21300000&amp;guid=c926ba6b0f902bd47bdcd54ac8314c39&type=3#unmuted");
+    width: 15%;
+    height: auto;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+    transition-duration: 0.2s;
+}
+
+.toggle > .unity-toggle__input {
+    display: none;
+}
+
+.slider {
+    width: 30%;
+    max-width: 30%;
+    margin-top: 0;
+    margin-right: 0;
+    margin-bottom: 0;
+    margin-left: 0;
+    padding-top: 0;
+    padding-right: 0;
+    padding-bottom: 0;
+    padding-left: 0;
+}
+
+.slider > .unity-slider__label {
+    display: none;
+}
+
+.slider > .unity-dragger {
+    display: none;
+}
+
+.button:hover {
+    -unity-background-image-tint-color: rgb(70, 70, 70);
+}
+
+.toggle:hover {
+    -unity-background-image-tint-color: rgb(70, 70, 70);
+}

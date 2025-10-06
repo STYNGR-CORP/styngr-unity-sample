@@ -1,0 +1,23 @@
+{
+  "name": "com.styngr.styngr-sdk",
+  "version": "5.0.0",
+  "displayName": "Styngr SDK",
+  "description": "Music and emotes for games and the metaverse. A library of millions of music tracks and beats from today\u2019s most popular artists that can be edited and customized by gamers and devs.",
+  "unity": "2020.3",
+  "unityRelease": "33f1",
+  "documentationUrl": "https://www.styngr.com/#getStarted",
+  "changelogUrl": "https://www.styngr.com/",
+  "licensesUrl": "https://www.styngr.com/",
+  "keywords": [
+    "styngr",
+    "music",
+    "radio",
+    "styngs",
+    "metaverse"
+  ],
+  "author": {
+    "name": "Styngr",
+    "email": "support@styngr.com",
+    "url": "https://www.styngr.com/"
+  }
+}

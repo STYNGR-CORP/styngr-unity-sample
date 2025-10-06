@@ -1,0 +1,21 @@
+{
+    "name": "Assets",
+    "rootNamespace": "",
+    "references": [
+        "GUID:297d67273af797647ac805108696115e",
+        "GUID:6055be8ebefd69e48b49212b09b47b2f",
+        "GUID:9e287cc7b3c8a0245a7d36254472d3c8",
+        "GUID:75469ad4d38634e559750d17036d5f7c",
+        "GUID:d04eb9c554ad44ceab303cecf0c0cf82",
+        "GUID:d8b63aba1907145bea998dd612889d6b"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -1,0 +1,5 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Template name="StripeRadio" src="project://database/Assets/UI/UI%20Toolkit/StripeRadioTemplate.uxml?fileID=9197481963319205126&amp;guid=540b0e28cae151e43abb11ad7eb5d894&amp;type=3#StripeRadioTemplate" />
+    <Style src="project://database/Assets/UI/UI%20Toolkit/RadioStripe.uss?fileID=7433441132597879392&amp;guid=850976e4db736164da7f6c3d34dc3463&amp;type=3#RadioStripe" />
+    <ui:Instance template="StripeRadio" name="StripeRadio" style="height: 100%; width: 100%; max-width: 100%; min-width: 100%; max-height: 100%; min-height: 100%;" />
+</ui:UXML>
